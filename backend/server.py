@@ -700,6 +700,123 @@ async def delete_admin(admin_id: str, super_admin: dict = Depends(get_super_admi
     await db.admins.delete_one({"id": admin_id})
     return {"message": "Admin deleted"}
 
+@api_router.put("/admin/{admin_id}/suspend")
+async def suspend_admin(admin_id: str, data: AdminSuspendUpdate, super_admin: dict = Depends(get_super_admin)):
+    """Suspend or unsuspend an admin (Super admin only)"""
+    admin = await db.admins.find_one({"id": admin_id}, {"_id": 0})
+    if not admin:
+        raise HTTPException(status_code=404, detail="Admin not found")
+    if admin.get("email") == SUPER_ADMIN_EMAIL:
+        raise HTTPException(status_code=400, detail="Cannot suspend the primary super admin")
+    
+    update_data = {"suspended": data.suspended}
+    if data.reason:
+        update_data["suspension_reason"] = data.reason
+    if not data.suspended:
+        update_data["suspension_reason"] = None
+    
+    await db.admins.update_one({"id": admin_id}, {"$set": update_data})
+    action = "suspended" if data.suspended else "unsuspended"
+    return {"message": f"Admin {action} successfully", "admin_id": admin_id}
+
+# =========================
+# CONTACT INFO & SITE CONTENT
+# =========================
+
+DEFAULT_CONTACT_INFO = {
+    "id": "contact",
+    "email": "leocelestine.s@gmail.com",
+    "phone": "+91 9600130807",
+    "phone2": "",
+    "address": "Professional Recording Studio, India",
+    "location_url": "https://share.google/g4DuYSZUP4hRejYRQ",
+    "instagram_url": "",
+    "youtube_url": "",
+    "twitter_url": ""
+}
+
+DEFAULT_SITE_CONTENT = {
+    "id": "content",
+    # Logo
+    "logo_url": "https://customer-assets.emergentagent.com/job_audio-haven-21/artifacts/kjwts159_HOGWARTS%20%20white%20bg%20only%20logo%20.jpg",
+    "logo_alt": "Hogwarts Music Studio",
+    # Hero Section
+    "hero_title": "Crafting",
+    "hero_title_gradient": "Sonic Excellence",
+    "hero_subtitle": "Where vision meets sound. Professional dubbing, mixing, mastering, and music production for films, series, and content creators.",
+    "hero_cta_text": "Book a Session",
+    # Services Section
+    "services_title": "Our Services",
+    "services_subtitle": "Professional audio services tailored to your needs",
+    # Projects Section
+    "projects_title": "Featured Projects",
+    "projects_subtitle": "Explore our latest work and collaborations",
+    # About Section
+    "about_title": "Crafting Sound Since 2018",
+    "about_subtitle": "Where passion meets precision",
+    "about_description": "Hogwarts Music Studio is a professional audio post-production facility dedicated to delivering exceptional sound experiences. We combine cutting-edge technology with artistic vision to bring your projects to life.",
+    "founder_name": "Leo Celestine",
+    "founder_title": "Music Composer & Founder",
+    "founder_bio": "With years of experience in music composition and audio production, Leo has worked on numerous films, series, and commercial projects, bringing creative vision to life through sound.",
+    "founder_imdb_url": "https://www.imdb.com/name/nm15867951/?ref_=ext_shr_lnk",
+    # CTA Section
+    "cta_title": "Ready to Create Something Amazing?",
+    "cta_subtitle": "Let's bring your audio vision to life. Book a session today.",
+    "cta_button_text": "Start Your Project",
+    # Footer
+    "footer_tagline": "Professional audio post-production studio crafting sonic excellence for films, music, and content creators.",
+    "copyright_text": "Hogwarts Music Studio. All rights reserved.",
+    # Booking Page
+    "booking_title": "Schedule Your Studio Session",
+    "booking_subtitle": "No account required. Fill out the form and we'll handle the rest.",
+    # Navbar
+    "nav_home": "Home",
+    "nav_services": "Services",
+    "nav_projects": "Projects",
+    "nav_about": "About",
+    "nav_booking": "Book Session"
+}
+
+@api_router.get("/settings/contact")
+async def get_contact_info():
+    """Get contact information (public)"""
+    contact = await db.contact_info.find_one({"id": "contact"}, {"_id": 0})
+    if not contact:
+        await db.contact_info.insert_one(DEFAULT_CONTACT_INFO.copy())
+        return DEFAULT_CONTACT_INFO
+    return contact
+
+@api_router.put("/settings/contact")
+async def update_contact_info(data: ContactInfoUpdate, admin: dict = Depends(get_super_admin)):
+    """Update contact information (Super admin only)"""
+    update_data = {k: v for k, v in data.model_dump().items() if v is not None}
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No update data")
+    
+    await db.contact_info.update_one({"id": "contact"}, {"$set": update_data}, upsert=True)
+    updated = await db.contact_info.find_one({"id": "contact"}, {"_id": 0})
+    return updated
+
+@api_router.get("/settings/content")
+async def get_site_content():
+    """Get all site content/text (public)"""
+    content = await db.site_content.find_one({"id": "content"}, {"_id": 0})
+    if not content:
+        await db.site_content.insert_one(DEFAULT_SITE_CONTENT.copy())
+        return DEFAULT_SITE_CONTENT
+    return content
+
+@api_router.put("/settings/content")
+async def update_site_content(data: SiteContentUpdate, admin: dict = Depends(get_super_admin)):
+    """Update site content/text (Super admin only)"""
+    update_data = {k: v for k, v in data.model_dump().items() if v is not None}
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No update data")
+    
+    await db.site_content.update_one({"id": "content"}, {"$set": update_data}, upsert=True)
+    updated = await db.site_content.find_one({"id": "content"}, {"_id": 0})
+    return updated
+
 # =========================
 # SITE SETTINGS
 # =========================
