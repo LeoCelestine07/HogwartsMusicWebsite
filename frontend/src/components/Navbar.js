@@ -94,7 +94,7 @@ const Navbar = () => {
         opacity: visible ? 1 : 0 
       }}
       transition={{ duration: 0.3, ease: 'easeInOut' }}
-      className={`fixed left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-4xl transition-all duration-300 ${
+      className={`fixed left-0 right-0 mx-auto z-50 w-[95%] max-w-4xl transition-all duration-300 ${
         scrolled ? 'top-2 sm:top-4' : 'top-3 sm:top-6'
       }`}
     >
