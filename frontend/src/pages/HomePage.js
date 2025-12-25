@@ -97,7 +97,7 @@ const HomePage = () => {
             >
               {/* Logo */}
               <div className="w-24 h-24 mx-auto mb-6 rounded-2xl overflow-hidden bg-white shadow-[0_0_40px_rgba(0,212,212,0.3)]">
-                <img src={LOGO_URL} alt="Hogwarts Music Studio" className="w-full h-full object-contain" />
+                <img src={content?.logo_url || LOGO_URL} alt={content?.logo_alt || "Hogwarts Music Studio"} className="w-full h-full object-contain" />
               </div>
               <span className="inline-block px-4 py-2 rounded-full glass border border-teal-500/30 text-xs uppercase tracking-[0.2em] text-teal-400 mb-6">
                 Professional Audio Post-Production
@@ -110,8 +110,8 @@ const HomePage = () => {
               transition={{ duration: 0.8, delay: 0.1 }}
               className="text-5xl sm:text-6xl lg:text-8xl font-bold tracking-tighter leading-none mb-6"
             >
-              <span className="block">Crafting</span>
-              <span className="text-gradient">Sonic Excellence</span>
+              <span className="block">{content?.hero_title || 'Crafting'}</span>
+              <span className="text-gradient">{content?.hero_title_gradient || 'Sonic Excellence'}</span>
             </motion.h1>
 
             <motion.p
@@ -120,7 +120,7 @@ const HomePage = () => {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="text-lg md:text-xl text-white/60 max-w-2xl mx-auto mb-12 leading-relaxed"
             >
-              Where vision meets sound. Professional dubbing, mixing, mastering, and music production for films, series, and content creators.
+              {content?.hero_subtitle || 'Where vision meets sound. Professional dubbing, mixing, mastering, and music production for films, series, and content creators.'}
             </motion.p>
 
             <motion.div
