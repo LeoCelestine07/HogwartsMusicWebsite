@@ -362,20 +362,18 @@ frontend:
 metadata:
   created_by: "main_agent"
   version: "1.0"
-  test_sequence: 6
+  test_sequence: 7
   run_ui: true
 
 test_plan:
   current_focus:
-    - "Stats section customization"
-    - "Navbar scroll hide/show"
-    - "Mobile navbar visibility"
-    - "Careers form new fields (Instagram, YouTube, CV)"
-    - "Application form labels customization"
+    - "Navbar rectangular shape (not round)"
+    - "Services page customizable in Content tab"
+    - "About page fully customizable including philosophy and bullet points"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
 
 agent_communication:
   - agent: "main"
-    message: "Implemented: 1) Stats section on About page now customizable (stat1_value, stat1_label, stat2_*, stat3_*), 2) Navbar hide/show on scroll (hides on fast scroll down, shows on scroll up), 3) Fixed mobile navbar visibility issue (hamburger menu now visible), 4) Added new fields to Careers form: Instagram ID, 3 YouTube links, CV upload. 5) Added Application Form Labels section in admin Content tab for customizing all form field labels. Admin credentials: leocelestine.s@gmail.com / Admin123!"
+    message: "Implemented: 1) Changed navbar from rounded-full to rounded-2xl for rectangular shape, 2) Added Services Page section in Content tab (page badge, title, title_gradient, subtitle, cta_title, cta_subtitle, cta_button), 3) Added comprehensive About Page section in Content tab (page badge, title, title_gradient, description, philosophy_title, philosophy_text, feature1, feature2, feature3, values_badge, values_title, journey_badge, journey_title, cta_title, cta_title_gradient, cta_subtitle, cta_button), 4) Added Founder Section fields (badge, section_title, name, title, bio, imdb_url, imdb_text). Admin credentials: leocelestine.s@gmail.com / Admin123!"
