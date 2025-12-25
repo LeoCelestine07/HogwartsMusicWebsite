@@ -943,6 +943,7 @@ const SiteSettings = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const { token } = useAuth();
+  const { refreshTheme } = useTheme();
 
   const backgroundTypes = [
     { value: 'gradient', label: 'Gradient (Default)' },
@@ -981,7 +982,9 @@ const SiteSettings = () => {
       await axios.put(`${API}/settings/site`, settings, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      toast.success('Settings saved');
+      toast.success('Settings saved! Theme updated across the site.');
+      // Refresh the theme to apply changes immediately
+      refreshTheme();
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Failed to save settings');
     } finally {
