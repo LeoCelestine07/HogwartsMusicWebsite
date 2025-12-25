@@ -100,7 +100,7 @@ const ServicesPage = () => {
                         <img 
                           src={resolveImageUrl(service.image_url, 'service')} 
                           alt={service.name}
-                          className="w-full h-full object-cover opacity-70 group-hover:opacity-90 group-hover:scale-105 transition-all duration-700"
+                          className="w-full h-full object-cover group-hover:scale-105 transition-all duration-700"
                           onError={(e) => handleImageError(e, 'service')}
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-[#0a1a1f] via-transparent to-transparent" />
