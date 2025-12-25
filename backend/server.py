@@ -274,6 +274,32 @@ class SiteContentUpdate(BaseModel):
     applications_title: Optional[str] = None
     applications_subtitle: Optional[str] = None
     applications_empty_text: Optional[str] = None
+    # Projects Page
+    projects_page_badge: Optional[str] = None
+    projects_page_title: Optional[str] = None
+    projects_page_title_gradient: Optional[str] = None
+    projects_page_subtitle: Optional[str] = None
+    projects_stat1_value: Optional[str] = None
+    projects_stat1_label: Optional[str] = None
+    projects_stat2_value: Optional[str] = None
+    projects_stat2_label: Optional[str] = None
+    projects_stat3_value: Optional[str] = None
+    projects_stat3_label: Optional[str] = None
+    projects_stat4_value: Optional[str] = None
+    projects_stat4_label: Optional[str] = None
+    # About Page Timeline/Story
+    timeline_year1: Optional[str] = None
+    timeline_title1: Optional[str] = None
+    timeline_desc1: Optional[str] = None
+    timeline_year2: Optional[str] = None
+    timeline_title2: Optional[str] = None
+    timeline_desc2: Optional[str] = None
+    timeline_year3: Optional[str] = None
+    timeline_title3: Optional[str] = None
+    timeline_desc3: Optional[str] = None
+    timeline_year4: Optional[str] = None
+    timeline_title4: Optional[str] = None
+    timeline_desc4: Optional[str] = None
     # Footer
     footer_tagline: Optional[str] = None
     footer_quick_links_title: Optional[str] = None
