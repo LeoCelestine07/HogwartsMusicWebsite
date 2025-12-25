@@ -41,6 +41,46 @@ const CareersPage = () => {
     }
   };
 
+  const handleCvUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Check file type
+    const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+    if (!allowedTypes.includes(file.type)) {
+      toast.error('Please upload a PDF or Word document');
+      return;
+    }
+
+    // Check file size (10MB max)
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error('File size must be less than 10MB');
+      return;
+    }
+
+    setUploadingCv(true);
+    try {
+      const formDataUpload = new FormData();
+      formDataUpload.append('file', file);
+      const response = await axios.post(`${API}/upload/cv`, formDataUpload);
+      setCvFile({ name: file.name, url: response.data.url });
+      setFormData({ ...formData, cv_filename: response.data.filename });
+      toast.success('CV uploaded successfully!');
+    } catch (error) {
+      toast.error('Failed to upload CV');
+    } finally {
+      setUploadingCv(false);
+    }
+  };
+
+  const removeCv = () => {
+    setCvFile(null);
+    setFormData({ ...formData, cv_filename: '' });
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.name || !formData.email || !formData.phone || !formData.city || !formData.note) {
