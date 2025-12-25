@@ -70,18 +70,12 @@ const AboutPage = () => {
                 Hogwarts Music Studio is a professional audio post-production facility dedicated to delivering exceptional sound experiences. From dubbing and mixing to full music production, we bring technical expertise and creative vision to every project.
               </p>
               <div className="flex flex-wrap gap-8">
-                <div>
-                  <span className="text-4xl font-bold text-gradient">6+</span>
-                  <p className="text-white/40 text-sm mt-1">Years Experience</p>
-                </div>
-                <div>
-                  <span className="text-4xl font-bold text-gradient">50+</span>
-                  <p className="text-white/40 text-sm mt-1">Projects Delivered</p>
-                </div>
-                <div>
-                  <span className="text-4xl font-bold text-gradient">100%</span>
-                  <p className="text-white/40 text-sm mt-1">Client Satisfaction</p>
-                </div>
+                {stats.map((stat, index) => (
+                  <div key={index}>
+                    <span className="text-4xl font-bold text-gradient">{stat.value}</span>
+                    <p className="text-white/40 text-sm mt-1">{stat.label}</p>
+                  </div>
+                ))}
               </div>
             </motion.div>
 
