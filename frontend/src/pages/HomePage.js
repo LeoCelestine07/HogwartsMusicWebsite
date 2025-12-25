@@ -193,9 +193,10 @@ const HomePage = () => {
                   {service.image_url && (
                     <div className="relative w-full h-40 rounded-2xl overflow-hidden mb-6 glass">
                       <img 
-                        src={service.image_url} 
+                        src={resolveImageUrl(service.image_url, 'service')} 
                         alt={service.name}
                         className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
+                        onError={(e) => handleImageError(e, 'service')}
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-[#0a1a1f]/80 to-transparent" />
                     </div>
