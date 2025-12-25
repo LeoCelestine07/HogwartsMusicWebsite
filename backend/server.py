@@ -229,14 +229,22 @@ async def login_user(data: UserLogin):
 
 @api_router.get("/auth/me", response_model=dict)
 async def get_me(current_user: dict = Depends(get_current_user)):
-    user = await db.users.find_one({"id": current_user["user_id"]}, {"_id": 0, "password": 0})
-    if not user:
-        # Check if admin
-        admin = await db.admins.find_one({"id": current_user.get("admin_id")}, {"_id": 0, "password": 0})
-        if admin:
-            return {"user": admin, "role": "admin"}
-        raise HTTPException(status_code=404, detail="User not found")
-    return {"user": user, "role": "user"}
+    # Check if admin first
+    if current_user.get("role") == "admin":
+        admin_id = current_user.get("admin_id")
+        if admin_id:
+            admin = await db.admins.find_one({"id": admin_id}, {"_id": 0, "password": 0})
+            if admin:
+                return {"user": admin, "role": "admin"}
+    
+    # Check regular user
+    user_id = current_user.get("user_id")
+    if user_id:
+        user = await db.users.find_one({"id": user_id}, {"_id": 0, "password": 0})
+        if user:
+            return {"user": user, "role": "user"}
+    
+    raise HTTPException(status_code=404, detail="User not found")
 
 # =========================
 # ADMIN AUTH ROUTES
