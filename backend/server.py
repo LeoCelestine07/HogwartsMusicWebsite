@@ -268,6 +268,11 @@ class JobApplicationCreate(BaseModel):
     position_type: str  # "intern" or "engineer"
     note: str
     portfolio_url: Optional[str] = None
+    instagram_id: Optional[str] = None
+    youtube_link1: Optional[str] = None
+    youtube_link2: Optional[str] = None
+    youtube_link3: Optional[str] = None
+    cv_filename: Optional[str] = None
 
 # =========================
 # AUTH HELPERS
