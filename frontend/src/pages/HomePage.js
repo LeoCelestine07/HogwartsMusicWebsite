@@ -327,18 +327,18 @@ const HomePage = () => {
             {/* Content */}
             <div className="relative p-12 md:p-20 text-center">
               <h2 className="text-4xl md:text-6xl font-bold tracking-tight mb-6">
-                Ready to Create<br />
-                <span className="text-gradient">Something Amazing?</span>
+                {content?.cta_title || 'Ready to Create'}<br />
+                <span className="text-gradient">{content?.cta_title ? '' : 'Something Amazing?'}</span>
               </h2>
               <p className="text-white/50 text-lg max-w-xl mx-auto mb-10">
-                Let's bring your audio vision to life. Book a session today and experience the Hogwarts difference.
+                {content?.cta_subtitle || "Let's bring your audio vision to life. Book a session today and experience the Hogwarts difference."}
               </p>
               <Link
                 to="/booking"
                 data-testid="cta-book-session"
                 className="inline-flex items-center gap-2 px-10 py-5 rounded-full bg-gradient-to-r from-cyan-500 to-teal-500 text-black font-bold text-lg hover:scale-105 transition-transform shadow-[0_0_40px_rgba(0,212,212,0.3)]"
               >
-                Book Your Session
+                {content?.cta_button_text || 'Book Your Session'}
                 <ArrowRight className="w-5 h-5" />
               </Link>
             </div>
