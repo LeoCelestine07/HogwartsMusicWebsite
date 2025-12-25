@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Calendar, Clock, CheckCircle, Loader2, User, Mail, LogOut } from 'lucide-react';
+import { Calendar, Clock, CheckCircle, Loader2, User, Mail, LogOut, XCircle, AlertCircle, Timer, RefreshCw } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 
@@ -12,6 +12,7 @@ const UserDashboard = () => {
   const { user, token, loading: authLoading, logout, isAdmin } = useAuth();
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -26,6 +27,7 @@ const UserDashboard = () => {
     if (token && !isAdmin) {
       fetchBookings();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token, isAdmin]);
 
   const fetchBookings = async () => {
@@ -38,7 +40,13 @@ const UserDashboard = () => {
       console.error('Error fetching bookings:', error);
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
+  };
+
+  const handleRefresh = () => {
+    setRefreshing(true);
+    fetchBookings();
   };
 
   const handleLogout = () => {
@@ -47,17 +55,60 @@ const UserDashboard = () => {
   };
 
   const StatusBadge = ({ status }) => {
-    const styles = {
-      pending: 'bg-yellow-400/20 text-yellow-400 border-yellow-400/30',
-      confirmed: 'bg-green-400/20 text-green-400 border-green-400/30',
-      completed: 'bg-purple-400/20 text-purple-400 border-purple-400/30',
-      cancelled: 'bg-red-400/20 text-red-400 border-red-400/30'
+    const statusConfig = {
+      pending: {
+        style: 'bg-yellow-400/20 text-yellow-400 border-yellow-400/30',
+        icon: AlertCircle,
+        label: 'Pending Review'
+      },
+      approved: {
+        style: 'bg-green-400/20 text-green-400 border-green-400/30',
+        icon: CheckCircle,
+        label: 'Approved'
+      },
+      confirmed: {
+        style: 'bg-green-400/20 text-green-400 border-green-400/30',
+        icon: CheckCircle,
+        label: 'Confirmed'
+      },
+      completed: {
+        style: 'bg-purple-400/20 text-purple-400 border-purple-400/30',
+        icon: CheckCircle,
+        label: 'Completed'
+      },
+      rejected: {
+        style: 'bg-red-400/20 text-red-400 border-red-400/30',
+        icon: XCircle,
+        label: 'Rejected'
+      },
+      cancelled: {
+        style: 'bg-red-400/20 text-red-400 border-red-400/30',
+        icon: XCircle,
+        label: 'Cancelled'
+      }
     };
+    
+    const config = statusConfig[status?.toLowerCase()] || statusConfig.pending;
+    const Icon = config.icon;
+    
     return (
-      <span className={`px-3 py-1 rounded-full text-xs font-medium border ${styles[status] || styles.pending}`}>
-        {status?.charAt(0).toUpperCase() + status?.slice(1)}
+      <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border ${config.style}`}>
+        <Icon className="w-3 h-3" />
+        {config.label}
       </span>
     );
+  };
+
+  const getStatusDescription = (status) => {
+    const descriptions = {
+      pending: 'Your booking is awaiting review by our team.',
+      approved: 'Great news! Your booking has been approved. We will contact you soon.',
+      confirmed: 'Your session is confirmed and scheduled.',
+      completed: 'This session has been completed. Thank you!',
+      rejected: 'Unfortunately, this booking could not be accommodated.',
+      cancelled: 'This booking has been cancelled.'
+    };
+    return descriptions[status?.toLowerCase()] || descriptions.pending;
   };
 
   if (authLoading) {
@@ -81,7 +132,7 @@ const UserDashboard = () => {
         >
           <div>
             <h1 className="text-3xl md:text-4xl font-bold mb-2">Welcome, {user.name}!</h1>
-            <p className="text-white/50">Manage your bookings and account</p>
+            <p className="text-white/50">Track your bookings and manage your account</p>
           </div>
           <button
             onClick={handleLogout}
@@ -120,7 +171,17 @@ const UserDashboard = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          <h2 className="text-2xl font-bold mb-6">Your Bookings</h2>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold">Your Bookings</h2>
+            <button
+              onClick={handleRefresh}
+              disabled={refreshing}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg glass border border-white/10 text-white/60 hover:text-white hover:border-white/20 transition-all text-sm"
+            >
+              <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+              Refresh
+            </button>
+          </div>
           
           {loading ? (
             <div className="flex items-center justify-center h-40">
@@ -129,7 +190,7 @@ const UserDashboard = () => {
           ) : bookings.length === 0 ? (
             <div className="glass rounded-2xl p-12 border border-white/10 text-center">
               <Calendar className="w-12 h-12 text-white/20 mx-auto mb-4" />
-              <p className="text-white/50 mb-4">You haven't made any bookings yet</p>
+              <p className="text-white/50 mb-4">You have not made any bookings yet</p>
               <button
                 onClick={() => navigate('/booking')}
                 className="px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-400 to-purple-500 text-black font-semibold hover:scale-105 transition-transform"
@@ -148,34 +209,80 @@ const UserDashboard = () => {
                   className="glass rounded-2xl p-6 border border-white/10 hover:border-white/20 transition-all"
                   data-testid={`user-booking-${booking.id}`}
                 >
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
+                  <div className="flex flex-col gap-4">
+                    {/* Header */}
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+                      <div className="flex items-center gap-3 flex-wrap">
                         <h3 className="text-lg font-bold">{booking.service_name}</h3>
                         <StatusBadge status={booking.status} />
                       </div>
-                      <p className="text-white/50 text-sm line-clamp-2 mb-3">{booking.description}</p>
-                      <div className="flex flex-wrap gap-4 text-sm">
-                        <span className="flex items-center gap-2 text-white/60">
-                          <Calendar className="w-4 h-4 text-cyan-400" />
-                          {booking.preferred_date}
+                      {booking.hours && (
+                        <span className="flex items-center gap-2 text-cyan-400 text-sm">
+                          <Timer className="w-4 h-4" />
+                          {booking.hours} hour(s) booked
                         </span>
-                        <span className="flex items-center gap-2 text-white/60">
-                          <Clock className="w-4 h-4 text-cyan-400" />
-                          {booking.preferred_time}
-                        </span>
-                      </div>
+                      )}
                     </div>
+
+                    {/* Status Description */}
+                    <p className="text-sm text-white/40 italic">
+                      {getStatusDescription(booking.status)}
+                    </p>
+
+                    {/* Description */}
+                    <p className="text-white/50 text-sm line-clamp-2">{booking.description}</p>
+
+                    {/* Date/Time */}
+                    <div className="flex flex-wrap gap-4 text-sm border-t border-white/5 pt-4">
+                      <span className="flex items-center gap-2 text-white/60">
+                        <Calendar className="w-4 h-4 text-cyan-400" />
+                        {booking.preferred_date}
+                      </span>
+                      <span className="flex items-center gap-2 text-white/60">
+                        <Clock className="w-4 h-4 text-cyan-400" />
+                        {booking.preferred_time}
+                      </span>
+                    </div>
+
+                    {/* Completed Badge */}
                     {booking.status === 'completed' && (
-                      <div className="flex items-center gap-2 text-green-400">
+                      <div className="flex items-center gap-2 text-purple-400 bg-purple-400/10 rounded-lg p-3">
                         <CheckCircle className="w-5 h-5" />
-                        <span className="text-sm font-medium">Completed</span>
+                        <span className="text-sm font-medium">Session completed. Thank you for choosing Hogwarts Music Studio!</span>
+                      </div>
+                    )}
+
+                    {/* Rejected Info */}
+                    {booking.status === 'rejected' && booking.rejection_reason && (
+                      <div className="flex items-start gap-2 text-red-400 bg-red-400/10 rounded-lg p-3">
+                        <XCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                        <div>
+                          <span className="text-sm font-medium">Reason:</span>
+                          <p className="text-sm text-white/60">{booking.rejection_reason}</p>
+                        </div>
                       </div>
                     )}
                   </div>
                 </motion.div>
               ))}
             </div>
+          )}
+
+          {/* Book Another Session */}
+          {bookings.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4 }}
+              className="mt-8 text-center"
+            >
+              <button
+                onClick={() => navigate('/booking')}
+                className="px-8 py-4 rounded-full bg-gradient-to-r from-cyan-500 to-teal-500 text-black font-bold hover:scale-105 transition-transform"
+              >
+                Book Another Session
+              </button>
+            </motion.div>
           )}
         </motion.div>
       </div>
