@@ -170,8 +170,8 @@ const HomePage = () => {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <span className="text-xs uppercase tracking-[0.2em] text-cyan-400 mb-4 block">What We Do</span>
-            <h2 className="text-4xl md:text-5xl font-bold tracking-tight">Our Services</h2>
+            <span className="text-xs uppercase tracking-[0.2em] text-cyan-400 mb-4 block">{content?.services_badge || 'What We Do'}</span>
+            <h2 className="text-4xl md:text-5xl font-bold tracking-tight">{content?.services_title || 'Our Services'}</h2>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
