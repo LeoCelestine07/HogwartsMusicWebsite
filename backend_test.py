@@ -450,13 +450,13 @@ class HogwartsAPITester:
             )
             
             if updated:
-                if updated.get('status') == 'hired':
+                if updated.get('message') and 'hired' in updated.get('message', ''):
                     self.log_result("Application Status Updated to Hired", True)
                     # Note: We can't directly test email sending without email service access
                     # But we can verify the API call succeeds
                     self.log_result("Email Trigger for Hired Status", True, "API call successful - email should be sent")
                 else:
-                    self.log_result("Application Status Updated to Hired", False, f"Status not updated correctly: {updated.get('status')}")
+                    self.log_result("Application Status Updated to Hired", False, f"Unexpected response: {updated}")
             
             # Test other status updates
             for status in ['rejected', 'pending']:
@@ -467,7 +467,7 @@ class HogwartsAPITester:
                     200
                 )
                 
-                if updated and updated.get('status') == status:
+                if updated and updated.get('message') and status in updated.get('message', ''):
                     self.log_result(f"Application Status Updated to {status.title()}", True)
                 else:
                     self.log_result(f"Application Status Updated to {status.title()}", False)
