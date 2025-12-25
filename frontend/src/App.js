@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Toaster } from "sonner";
 import { AuthProvider } from "./context/AuthContext";
+import { ThemeProvider } from "./context/ThemeContext";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import ChatWidget from "./components/ChatWidget";
@@ -19,6 +20,7 @@ import "./App.css";
 function App() {
   return (
     <AuthProvider>
+      <ThemeProvider>
       <BrowserRouter>
         <div className="min-h-screen bg-[#030305] relative">
           <Navbar />
