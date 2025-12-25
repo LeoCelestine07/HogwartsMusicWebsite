@@ -1,9 +1,9 @@
 {
-  "timestamp": "2025-12-25T19:48:56.742374",
+  "timestamp": "2025-12-25T19:49:39.478766",
   "summary": {
-    "tests_run": 27,
-    "tests_passed": 21,
-    "success_rate": "77.8%"
+    "tests_run": 34,
+    "tests_passed": 29,
+    "success_rate": "85.3%"
   },
   "detailed_results": [
     {
@@ -50,8 +50,57 @@
     },
     {
       "test": "Stats Section Fields Present",
-      "success": false,
-      "details": "Missing fields: ['stat1_value', 'stat1_label', 'stat2_value', 'stat2_label', 'stat3_value', 'stat3_label']",
+      "success": true,
+      "details": "",
+      "expected_status": null,
+      "actual_status": null
+    },
+    {
+      "test": "Update Stats Section",
+      "success": true,
+      "details": "",
+      "expected_status": 200,
+      "actual_status": 200
+    },
+    {
+      "test": "Stats Field stat1_value Updated",
+      "success": true,
+      "details": "",
+      "expected_status": null,
+      "actual_status": null
+    },
+    {
+      "test": "Stats Field stat1_label Updated",
+      "success": true,
+      "details": "",
+      "expected_status": null,
+      "actual_status": null
+    },
+    {
+      "test": "Stats Field stat2_value Updated",
+      "success": true,
+      "details": "",
+      "expected_status": null,
+      "actual_status": null
+    },
+    {
+      "test": "Stats Field stat2_label Updated",
+      "success": true,
+      "details": "",
+      "expected_status": null,
+      "actual_status": null
+    },
+    {
+      "test": "Stats Field stat3_value Updated",
+      "success": true,
+      "details": "",
+      "expected_status": null,
+      "actual_status": null
+    },
+    {
+      "test": "Stats Field stat3_label Updated",
+      "success": true,
+      "details": "",
       "expected_status": null,
       "actual_status": null
     },
@@ -135,7 +184,7 @@
     {
       "test": "Admin Applications Access",
       "success": true,
-      "details": "Found 1 applications",
+      "details": "Found 3 applications",
       "expected_status": null,
       "actual_status": null
     },
