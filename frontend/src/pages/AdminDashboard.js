@@ -1867,6 +1867,103 @@ const ContentManagement = () => {
           </div>
         </div>
 
+        {/* Application Form Labels */}
+        <div className="glass rounded-xl p-6 border border-white/10 lg:col-span-2">
+          <h3 className="font-bold text-lg mb-4 text-pink-400">Application Form Labels</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm text-white/60 mb-2">Name Label</label>
+              <input
+                type="text"
+                value={content.app_name_label || ''}
+                onChange={(e) => handleInputChange('app_name_label', e.target.value)}
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-cyan-500/50"
+                placeholder="Full Name"
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-white/60 mb-2">Email Label</label>
+              <input
+                type="text"
+                value={content.app_email_label || ''}
+                onChange={(e) => handleInputChange('app_email_label', e.target.value)}
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-cyan-500/50"
+                placeholder="Email Address"
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-white/60 mb-2">Phone Label</label>
+              <input
+                type="text"
+                value={content.app_phone_label || ''}
+                onChange={(e) => handleInputChange('app_phone_label', e.target.value)}
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-cyan-500/50"
+                placeholder="Phone Number"
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-white/60 mb-2">City Label</label>
+              <input
+                type="text"
+                value={content.app_city_label || ''}
+                onChange={(e) => handleInputChange('app_city_label', e.target.value)}
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-cyan-500/50"
+                placeholder="City"
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-white/60 mb-2">Instagram Label</label>
+              <input
+                type="text"
+                value={content.app_instagram_label || ''}
+                onChange={(e) => handleInputChange('app_instagram_label', e.target.value)}
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-cyan-500/50"
+                placeholder="Instagram ID (optional)"
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-white/60 mb-2">YouTube Label</label>
+              <input
+                type="text"
+                value={content.app_youtube_label || ''}
+                onChange={(e) => handleInputChange('app_youtube_label', e.target.value)}
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-cyan-500/50"
+                placeholder="YouTube Links (optional)"
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-white/60 mb-2">CV Upload Label</label>
+              <input
+                type="text"
+                value={content.app_cv_label || ''}
+                onChange={(e) => handleInputChange('app_cv_label', e.target.value)}
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-cyan-500/50"
+                placeholder="Upload CV/Resume (optional)"
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-white/60 mb-2">Note Label</label>
+              <input
+                type="text"
+                value={content.app_note_label || ''}
+                onChange={(e) => handleInputChange('app_note_label', e.target.value)}
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-cyan-500/50"
+                placeholder="Tell us about yourself"
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-white/60 mb-2">Portfolio Label</label>
+              <input
+                type="text"
+                value={content.app_portfolio_label || ''}
+                onChange={(e) => handleInputChange('app_portfolio_label', e.target.value)}
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-cyan-500/50"
+                placeholder="Portfolio Link (optional)"
+              />
+            </div>
+          </div>
+        </div>
+
         {/* Footer */}
         <div className="glass rounded-xl p-6 border border-white/10 lg:col-span-2">
           <h3 className="font-bold text-lg mb-4 text-purple-400">Footer</h3>
