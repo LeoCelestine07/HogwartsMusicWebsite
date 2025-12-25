@@ -30,10 +30,10 @@ const AboutPage = () => {
   ];
 
   const timeline = [
-    { year: '2018', title: 'Founded', description: 'Started as a small dubbing studio with a passion for sound.' },
-    { year: '2020', title: 'Expansion', description: 'Upgraded to state-of-the-art equipment and expanded services.' },
-    { year: '2022', title: 'Growth', description: 'Served 50+ clients including indie filmmakers and production houses.' },
-    { year: '2024', title: 'Present', description: 'Full-service audio post-production with cutting-edge technology.' },
+    { year: content?.timeline_year1 || '2018', title: content?.timeline_title1 || 'Founded', description: content?.timeline_desc1 || 'Started as a small dubbing studio with a passion for sound.' },
+    { year: content?.timeline_year2 || '2020', title: content?.timeline_title2 || 'Expansion', description: content?.timeline_desc2 || 'Upgraded to state-of-the-art equipment and expanded services.' },
+    { year: content?.timeline_year3 || '2022', title: content?.timeline_title3 || 'Growth', description: content?.timeline_desc3 || 'Served 50+ clients including indie filmmakers and production houses.' },
+    { year: content?.timeline_year4 || '2024', title: content?.timeline_title4 || 'Present', description: content?.timeline_desc4 || 'Full-service audio post-production with cutting-edge technology.' },
   ];
 
   const stats = [
