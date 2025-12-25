@@ -1629,6 +1629,79 @@ const ContentManagement = () => {
           </div>
         </div>
 
+        {/* Stats Section */}
+        <div className="glass rounded-xl p-6 border border-white/10">
+          <h3 className="font-bold text-lg mb-4 text-emerald-400">Stats Section (About Page)</h3>
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm text-white/60 mb-2">Stat 1 Value</label>
+                <input
+                  type="text"
+                  value={content.stat1_value || ''}
+                  onChange={(e) => handleInputChange('stat1_value', e.target.value)}
+                  className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-cyan-500/50"
+                  placeholder="6+"
+                />
+              </div>
+              <div>
+                <label className="block text-sm text-white/60 mb-2">Stat 1 Label</label>
+                <input
+                  type="text"
+                  value={content.stat1_label || ''}
+                  onChange={(e) => handleInputChange('stat1_label', e.target.value)}
+                  className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-cyan-500/50"
+                  placeholder="Years Experience"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm text-white/60 mb-2">Stat 2 Value</label>
+                <input
+                  type="text"
+                  value={content.stat2_value || ''}
+                  onChange={(e) => handleInputChange('stat2_value', e.target.value)}
+                  className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-cyan-500/50"
+                  placeholder="50+"
+                />
+              </div>
+              <div>
+                <label className="block text-sm text-white/60 mb-2">Stat 2 Label</label>
+                <input
+                  type="text"
+                  value={content.stat2_label || ''}
+                  onChange={(e) => handleInputChange('stat2_label', e.target.value)}
+                  className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-cyan-500/50"
+                  placeholder="Projects Delivered"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm text-white/60 mb-2">Stat 3 Value</label>
+                <input
+                  type="text"
+                  value={content.stat3_value || ''}
+                  onChange={(e) => handleInputChange('stat3_value', e.target.value)}
+                  className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-cyan-500/50"
+                  placeholder="100%"
+                />
+              </div>
+              <div>
+                <label className="block text-sm text-white/60 mb-2">Stat 3 Label</label>
+                <input
+                  type="text"
+                  value={content.stat3_label || ''}
+                  onChange={(e) => handleInputChange('stat3_label', e.target.value)}
+                  className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-cyan-500/50"
+                  placeholder="Client Satisfaction"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* CTA Section */}
         <div className="glass rounded-xl p-6 border border-white/10">
           <h3 className="font-bold text-lg mb-4 text-teal-400">Call to Action Section</h3>
