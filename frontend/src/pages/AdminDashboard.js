@@ -900,9 +900,10 @@ const ProjectsManagement = () => {
           >
             <div className="relative h-48">
               <img 
-                src={project.image_url} 
+                src={resolveImageUrl(project.image_url, 'project')} 
                 alt={project.name}
                 className="w-full h-full object-cover opacity-70 group-hover:opacity-90 transition-opacity"
+                onError={(e) => handleImageError(e, 'project')}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#0a1a1f]/90 to-transparent" />
               <div className="absolute top-3 right-3 flex gap-2">
