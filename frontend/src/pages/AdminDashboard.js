@@ -1246,12 +1246,23 @@ const AdminManagement = () => {
               <tr key={admin.id} className="border-t border-white/5 hover:bg-white/5">
                 <td className="p-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500 to-teal-500 flex items-center justify-center">
-                      <span className="text-black font-bold">{admin.name?.charAt(0)}</span>
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                      admin.suspended 
+                        ? 'bg-red-500/20 border-2 border-red-500/50' 
+                        : 'bg-gradient-to-br from-cyan-500 to-teal-500'
+                    }`}>
+                      {admin.suspended ? (
+                        <Ban className="w-5 h-5 text-red-400" />
+                      ) : (
+                        <span className="text-black font-bold">{admin.name?.charAt(0)}</span>
+                      )}
                     </div>
                     <div>
-                      <p className="font-medium">{admin.name}</p>
+                      <p className={`font-medium ${admin.suspended ? 'text-white/50 line-through' : ''}`}>{admin.name}</p>
                       <p className="text-xs text-white/40">{admin.email}</p>
+                      {admin.suspended && (
+                        <span className="text-xs text-red-400">Suspended</span>
+                      )}
                     </div>
                   </div>
                 </td>
@@ -1259,6 +1270,10 @@ const AdminManagement = () => {
                   {admin.is_super_admin || admin.email === 'leocelestine.s@gmail.com' ? (
                     <span className="px-3 py-1 rounded-full text-xs bg-amber-500/20 text-amber-400 border border-amber-500/30">
                       Super Admin
+                    </span>
+                  ) : admin.suspended ? (
+                    <span className="px-3 py-1 rounded-full text-xs bg-red-500/20 text-red-400 border border-red-500/30">
+                      Suspended
                     </span>
                   ) : (
                     <span className="px-3 py-1 rounded-full text-xs bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">
@@ -1271,6 +1286,8 @@ const AdminManagement = () => {
                     <span className="text-green-400 flex items-center gap-1">
                       <CheckCircle className="w-4 h-4" /> Always
                     </span>
+                  ) : admin.suspended ? (
+                    <span className="text-red-400/60 text-sm">N/A</span>
                   ) : (
                     <Select
                       value={admin.access_level || 'basic'}
@@ -1294,12 +1311,26 @@ const AdminManagement = () => {
                   {admin.is_super_admin || admin.email === 'leocelestine.s@gmail.com' ? (
                     <span className="text-white/30 text-sm">Protected</span>
                   ) : (
-                    <button
-                      onClick={() => deleteAdmin(admin.id)}
-                      className="p-2 hover:bg-red-500/20 rounded-lg text-red-400"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => suspendAdmin(admin.id, admin.suspended)}
+                        className={`p-2 rounded-lg ${
+                          admin.suspended 
+                            ? 'hover:bg-green-500/20 text-green-400' 
+                            : 'hover:bg-orange-500/20 text-orange-400'
+                        }`}
+                        title={admin.suspended ? 'Unsuspend Admin' : 'Suspend Admin'}
+                      >
+                        {admin.suspended ? <UserCheck className="w-4 h-4" /> : <UserX className="w-4 h-4" />}
+                      </button>
+                      <button
+                        onClick={() => deleteAdmin(admin.id)}
+                        className="p-2 hover:bg-red-500/20 rounded-lg text-red-400"
+                        title="Delete Admin"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
                   )}
                 </td>
               </tr>
