@@ -1316,18 +1316,6 @@ const AdminDashboard = () => {
   const { user, isAdmin, loading, logout, token } = useAuth();
   const [adminData, setAdminData] = useState(null);
 
-  useEffect(() => {
-    if (!loading && !isAdmin) {
-      navigate('/admin/login');
-    }
-  }, [isAdmin, loading, navigate]);
-
-  useEffect(() => {
-    if (token && isAdmin) {
-      fetchAdminData();
-    }
-  }, [token, isAdmin]);
-
   const fetchAdminData = async () => {
     try {
       const response = await axios.get(`${API}/auth/me`, {
@@ -1338,6 +1326,19 @@ const AdminDashboard = () => {
       console.error('Failed to fetch admin data');
     }
   };
+
+  useEffect(() => {
+    if (!loading && !isAdmin) {
+      navigate('/admin/login');
+    }
+  }, [isAdmin, loading, navigate]);
+
+  useEffect(() => {
+    if (token && isAdmin) {
+      fetchAdminData();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token, isAdmin]);
 
   if (loading) {
     return (
