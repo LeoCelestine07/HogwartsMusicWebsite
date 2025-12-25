@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Build a full-stack, multi-page modern web application for Hogwarts Music Studio with admin dashboard, OTP-based auth with forgot password, booking with hours selection, and user dashboard for tracking"
+user_problem_statement: "Build a full-stack, multi-page modern web application for Hogwarts Music Studio with admin dashboard, OTP-based auth with forgot password, booking with hours selection, and user dashboard for tracking. Add customisable Careers page content and Applications tab content in admin CMS. Scroll to top on navigation."
 
 backend:
   - task: "Forgot Password API"
@@ -111,13 +111,13 @@ backend:
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "POST /api/auth/forgot-password sends OTP to email. POST /api/auth/reset-password verifies OTP and updates password."
 
-  - task: "Resend OTP API"
+  - task: "Content Management API - Careers Fields"
     implemented: true
     working: true
     file: "/app/backend/server.py"
@@ -127,7 +127,80 @@ backend:
     status_history:
       - working: true
         agent: "main"
+        comment: "Added careers_badge, careers_title, careers_subtitle, careers_description, careers_intern_title, careers_intern_desc, careers_job_title, careers_job_desc, careers_form_title, careers_form_subtitle to SiteContentUpdate model. Also added applications_title, applications_subtitle, applications_empty_text."
+
+  - task: "Resend OTP API"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
         comment: "POST /api/admin/resend-otp sends new OTP for admin registration."
+
+  - task: "Job Applications API"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "POST /api/applications creates job application. GET /api/applications returns all applications. PUT /api/applications/{id}/status updates status."
+
+frontend:
+  - task: "ScrollToTop Component"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/ScrollToTop.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Created ScrollToTop component that scrolls to top on route change. Verified working via screenshot test."
+
+  - task: "Careers Page Content Customization"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/pages/CareersPage.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "CareersPage already fetches content from API and uses dynamic text for badge, title, subtitle, description, intern/engineer cards, and form."
+
+  - task: "Admin Dashboard - Content Tab Careers Fields"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/pages/AdminDashboard.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Added Careers Page section with fields for badge, title, subtitle, description, intern card title/desc, job card title/desc, form title/subtitle. Added Applications Tab section with title, subtitle, and empty state text."
+
+  - task: "HomePage Dynamic Content"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/pages/HomePage.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Updated hero_badge, services_badge, services_title, projects_badge, projects_title, projects_subtitle, cta_title, cta_subtitle, cta_button_text to use dynamic content from API."
 
   - task: "Booking with Hours"
     implemented: true
