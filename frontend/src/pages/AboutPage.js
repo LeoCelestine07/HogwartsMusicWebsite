@@ -1,0 +1,209 @@
+import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { ArrowRight, Award, Users, Clock, Headphones, Music2, Target } from 'lucide-react';
+
+const AboutPage = () => {
+  const values = [
+    { icon: Target, title: 'Precision', description: 'Every detail matters. We obsess over audio quality to deliver flawless results.' },
+    { icon: Headphones, title: 'Immersion', description: 'Creating soundscapes that transport listeners into the heart of every story.' },
+    { icon: Users, title: 'Collaboration', description: 'Working closely with creators to bring their unique vision to life.' },
+  ];
+
+  const timeline = [
+    { year: '2018', title: 'Founded', description: 'Started as a small dubbing studio with a passion for sound.' },
+    { year: '2020', title: 'Expansion', description: 'Upgraded to state-of-the-art equipment and expanded services.' },
+    { year: '2022', title: 'Growth', description: 'Served 50+ clients including indie filmmakers and production houses.' },
+    { year: '2024', title: 'Present', description: 'Full-service audio post-production with cutting-edge technology.' },
+  ];
+
+  return (
+    <div className="relative min-h-screen" data-testid="about-page">
+      {/* Background */}
+      <div className="fixed inset-0 bg-[#030305] -z-10">
+        <div className="absolute inset-0 bg-gradient-to-br from-indigo-900/10 via-transparent to-purple-900/10" />
+        <div className="absolute top-1/4 right-1/4 w-[500px] h-[500px] bg-cyan-500/5 rounded-full blur-[150px]" />
+      </div>
+
+      {/* Hero */}
+      <section className="pt-40 pb-20 px-6 md:px-12">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+            >
+              <span className="inline-block px-4 py-2 rounded-full glass border border-white/10 text-xs uppercase tracking-[0.2em] text-cyan-400 mb-6">
+                About Us
+              </span>
+              <h1 className="text-5xl md:text-6xl font-bold tracking-tighter mb-6">
+                Crafting Sound<br />
+                <span className="text-gradient">Since 2018</span>
+              </h1>
+              <p className="text-lg text-white/50 leading-relaxed mb-8">
+                Hogwarts Music Studio is a professional audio post-production facility dedicated to delivering exceptional sound experiences. From dubbing and mixing to full music production, we bring technical expertise and creative vision to every project.
+              </p>
+              <div className="flex flex-wrap gap-8">
+                <div>
+                  <span className="text-4xl font-bold text-gradient">6+</span>
+                  <p className="text-white/40 text-sm mt-1">Years Experience</p>
+                </div>
+                <div>
+                  <span className="text-4xl font-bold text-gradient">50+</span>
+                  <p className="text-white/40 text-sm mt-1">Projects Delivered</p>
+                </div>
+                <div>
+                  <span className="text-4xl font-bold text-gradient">100%</span>
+                  <p className="text-white/40 text-sm mt-1">Client Satisfaction</p>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Glass card with studio info */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="relative"
+            >
+              <div className="glass-heavy rounded-3xl p-8 md:p-10 border border-white/20">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-400 to-purple-500 flex items-center justify-center mb-6">
+                  <Music2 className="w-8 h-8 text-black" />
+                </div>
+                <h3 className="text-2xl font-bold mb-4">Our Philosophy</h3>
+                <p className="text-white/50 leading-relaxed mb-6">
+                  We believe that great sound is invisible — it doesn't call attention to itself but instead amplifies the emotional impact of every scene, every note, every word. Our mission is to be the sonic architects behind your creative vision.
+                </p>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <Award className="w-5 h-5 text-cyan-400" />
+                    <span className="text-white/70">Industry-standard equipment</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Clock className="w-5 h-5 text-cyan-400" />
+                    <span className="text-white/70">Fast turnaround times</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Users className="w-5 h-5 text-cyan-400" />
+                    <span className="text-white/70">Dedicated support team</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Floating decorative elements */}
+              <div className="absolute -top-4 -right-4 w-24 h-24 rounded-2xl glass border border-white/10 opacity-50 -z-10" />
+              <div className="absolute -bottom-4 -left-4 w-16 h-16 rounded-xl glass border border-white/10 opacity-30 -z-10" />
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Values */}
+      <section className="py-24 px-6 md:px-12">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <span className="text-xs uppercase tracking-[0.2em] text-purple-400 mb-4 block">Our Values</span>
+            <h2 className="text-4xl md:text-5xl font-bold tracking-tight">What Drives Us</h2>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {values.map((value, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                className="glass rounded-3xl p-8 border border-white/10 hover:border-white/20 transition-all card-hover text-center"
+              >
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-400/20 to-purple-500/20 border border-white/10 flex items-center justify-center mx-auto mb-6">
+                  <value.icon className="w-7 h-7 text-cyan-400" />
+                </div>
+                <h3 className="text-xl font-bold mb-3">{value.title}</h3>
+                <p className="text-white/50 text-sm leading-relaxed">{value.description}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Timeline */}
+      <section className="py-24 px-6 md:px-12 bg-gradient-to-b from-transparent via-purple-900/5 to-transparent">
+        <div className="max-w-4xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <span className="text-xs uppercase tracking-[0.2em] text-cyan-400 mb-4 block">Our Journey</span>
+            <h2 className="text-4xl md:text-5xl font-bold tracking-tight">The Story So Far</h2>
+          </motion.div>
+
+          <div className="relative">
+            {/* Timeline line */}
+            <div className="absolute left-8 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-cyan-400/50 via-purple-500/50 to-transparent" />
+
+            {timeline.map((item, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, x: index % 2 === 0 ? -30 : 30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                className={`relative flex items-center mb-12 ${
+                  index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'
+                }`}
+              >
+                {/* Dot */}
+                <div className="absolute left-8 md:left-1/2 w-4 h-4 rounded-full bg-gradient-to-br from-cyan-400 to-purple-500 -translate-x-1/2 z-10" />
+                
+                {/* Content */}
+                <div className={`ml-20 md:ml-0 md:w-5/12 ${index % 2 === 0 ? 'md:pr-16 md:text-right' : 'md:pl-16'}`}>
+                  <span className="text-cyan-400 font-bold text-lg">{item.year}</span>
+                  <h3 className="text-xl font-bold mt-1 mb-2">{item.title}</h3>
+                  <p className="text-white/50 text-sm">{item.description}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="py-24 px-6 md:px-12">
+        <div className="max-w-3xl mx-auto text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="glass-heavy rounded-3xl p-12 md:p-16 border border-white/20"
+          >
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Let's Create Something<br />
+              <span className="text-gradient">Extraordinary</span>
+            </h2>
+            <p className="text-white/50 mb-8">
+              Ready to elevate your project with professional audio? We'd love to hear from you.
+            </p>
+            <Link
+              to="/booking"
+              data-testid="about-cta-button"
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-white text-black font-bold hover:scale-105 transition-transform"
+            >
+              Start a Project
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </motion.div>
+        </div>
+      </section>
+    </div>
+  );
+};
+
+export default AboutPage;
