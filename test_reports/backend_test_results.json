@@ -1,9 +1,9 @@
 {
-  "timestamp": "2025-12-25T20:29:17.068462",
+  "timestamp": "2025-12-25T20:30:03.100637",
   "summary": {
-    "tests_run": 65,
-    "tests_passed": 53,
-    "success_rate": "81.5%"
+    "tests_run": 88,
+    "tests_passed": 80,
+    "success_rate": "90.9%"
   },
   "detailed_results": [
     {
@@ -50,8 +50,71 @@
     },
     {
       "test": "Projects Page Stats Fields Present",
-      "success": false,
-      "details": "Missing fields: ['projects_page_badge', 'projects_page_title', 'projects_page_title_gradient', 'projects_page_subtitle', 'projects_stat1_value', 'projects_stat1_label', 'projects_stat2_value', 'projects_stat2_label', 'projects_stat3_value', 'projects_stat3_label', 'projects_stat4_value', 'projects_stat4_label']",
+      "success": true,
+      "details": "",
+      "expected_status": null,
+      "actual_status": null
+    },
+    {
+      "test": "Update Projects Page Stats",
+      "success": true,
+      "details": "",
+      "expected_status": 200,
+      "actual_status": 200
+    },
+    {
+      "test": "Projects Stats Field projects_stat1_value Updated",
+      "success": true,
+      "details": "",
+      "expected_status": null,
+      "actual_status": null
+    },
+    {
+      "test": "Projects Stats Field projects_stat1_label Updated",
+      "success": true,
+      "details": "",
+      "expected_status": null,
+      "actual_status": null
+    },
+    {
+      "test": "Projects Stats Field projects_stat2_value Updated",
+      "success": true,
+      "details": "",
+      "expected_status": null,
+      "actual_status": null
+    },
+    {
+      "test": "Projects Stats Field projects_stat2_label Updated",
+      "success": true,
+      "details": "",
+      "expected_status": null,
+      "actual_status": null
+    },
+    {
+      "test": "Projects Stats Field projects_stat3_value Updated",
+      "success": true,
+      "details": "",
+      "expected_status": null,
+      "actual_status": null
+    },
+    {
+      "test": "Projects Stats Field projects_stat3_label Updated",
+      "success": true,
+      "details": "",
+      "expected_status": null,
+      "actual_status": null
+    },
+    {
+      "test": "Projects Stats Field projects_stat4_value Updated",
+      "success": true,
+      "details": "",
+      "expected_status": null,
+      "actual_status": null
+    },
+    {
+      "test": "Projects Stats Field projects_stat4_label Updated",
+      "success": true,
+      "details": "",
       "expected_status": null,
       "actual_status": null
     },
@@ -64,8 +127,99 @@
     },
     {
       "test": "Timeline Fields Present",
-      "success": false,
-      "details": "Missing fields: ['timeline_year1', 'timeline_title1', 'timeline_desc1', 'timeline_year2', 'timeline_title2', 'timeline_desc2', 'timeline_year3', 'timeline_title3', 'timeline_desc3', 'timeline_year4', 'timeline_title4', 'timeline_desc4']",
+      "success": true,
+      "details": "",
+      "expected_status": null,
+      "actual_status": null
+    },
+    {
+      "test": "Update Timeline Content",
+      "success": true,
+      "details": "",
+      "expected_status": 200,
+      "actual_status": 200
+    },
+    {
+      "test": "Timeline Field timeline_year1 Updated",
+      "success": true,
+      "details": "",
+      "expected_status": null,
+      "actual_status": null
+    },
+    {
+      "test": "Timeline Field timeline_title1 Updated",
+      "success": true,
+      "details": "",
+      "expected_status": null,
+      "actual_status": null
+    },
+    {
+      "test": "Timeline Field timeline_desc1 Updated",
+      "success": true,
+      "details": "",
+      "expected_status": null,
+      "actual_status": null
+    },
+    {
+      "test": "Timeline Field timeline_year2 Updated",
+      "success": true,
+      "details": "",
+      "expected_status": null,
+      "actual_status": null
+    },
+    {
+      "test": "Timeline Field timeline_title2 Updated",
+      "success": true,
+      "details": "",
+      "expected_status": null,
+      "actual_status": null
+    },
+    {
+      "test": "Timeline Field timeline_desc2 Updated",
+      "success": true,
+      "details": "",
+      "expected_status": null,
+      "actual_status": null
+    },
+    {
+      "test": "Timeline Field timeline_year3 Updated",
+      "success": true,
+      "details": "",
+      "expected_status": null,
+      "actual_status": null
+    },
+    {
+      "test": "Timeline Field timeline_title3 Updated",
+      "success": true,
+      "details": "",
+      "expected_status": null,
+      "actual_status": null
+    },
+    {
+      "test": "Timeline Field timeline_desc3 Updated",
+      "success": true,
+      "details": "",
+      "expected_status": null,
+      "actual_status": null
+    },
+    {
+      "test": "Timeline Field timeline_year4 Updated",
+      "success": true,
+      "details": "",
+      "expected_status": null,
+      "actual_status": null
+    },
+    {
+      "test": "Timeline Field timeline_title4 Updated",
+      "success": true,
+      "details": "",
+      "expected_status": null,
+      "actual_status": null
+    },
+    {
+      "test": "Timeline Field timeline_desc4 Updated",
+      "success": true,
+      "details": "",
       "expected_status": null,
       "actual_status": null
     },
@@ -358,39 +512,24 @@
     },
     {
       "test": "Update Application Status to Hired",
-      "success": false,
-      "details": [
-        {
-          "type": "missing",
-          "loc": [
-            "query",
-            "status"
-          ],
-          "msg": "Field required",
-          "input": null,
-          "url": "https://errors.pydantic.dev/2.12/v/missing"
-        }
-      ],
+      "success": true,
+      "details": "",
       "expected_status": 200,
-      "actual_status": 422
+      "actual_status": 200
+    },
+    {
+      "test": "Application Status Updated to Hired",
+      "success": false,
+      "details": "Status not updated correctly: None",
+      "expected_status": null,
+      "actual_status": null
     },
     {
       "test": "Update Application Status to Rejected",
-      "success": false,
-      "details": [
-        {
-          "type": "missing",
-          "loc": [
-            "query",
-            "status"
-          ],
-          "msg": "Field required",
-          "input": null,
-          "url": "https://errors.pydantic.dev/2.12/v/missing"
-        }
-      ],
+      "success": true,
+      "details": "",
       "expected_status": 200,
-      "actual_status": 422
+      "actual_status": 200
     },
     {
       "test": "Application Status Updated to Rejected",
@@ -401,21 +540,10 @@
     },
     {
       "test": "Update Application Status to Pending",
-      "success": false,
-      "details": [
-        {
-          "type": "missing",
-          "loc": [
-            "query",
-            "status"
-          ],
-          "msg": "Field required",
-          "input": null,
-          "url": "https://errors.pydantic.dev/2.12/v/missing"
-        }
-      ],
+      "success": true,
+      "details": "",
       "expected_status": 200,
-      "actual_status": 422
+      "actual_status": 200
     },
     {
       "test": "Application Status Updated to Pending",
@@ -434,7 +562,7 @@
     {
       "test": "Admin Applications Access",
       "success": true,
-      "details": "Found 8 applications",
+      "details": "Found 10 applications",
       "expected_status": null,
       "actual_status": null
     },
