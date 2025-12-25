@@ -155,6 +155,57 @@ class SiteSettingsUpdate(BaseModel):
 class AdminAccessUpdate(BaseModel):
     access_level: str  # "basic", "full", "super"
 
+class AdminSuspendUpdate(BaseModel):
+    suspended: bool
+    reason: Optional[str] = None
+
+class ContactInfoUpdate(BaseModel):
+    email: Optional[str] = None
+    phone: Optional[str] = None
+    phone2: Optional[str] = None
+    address: Optional[str] = None
+    location_url: Optional[str] = None
+    instagram_url: Optional[str] = None
+    youtube_url: Optional[str] = None
+    twitter_url: Optional[str] = None
+
+class SiteContentUpdate(BaseModel):
+    # Hero Section
+    hero_title: Optional[str] = None
+    hero_subtitle: Optional[str] = None
+    hero_cta_text: Optional[str] = None
+    # Services Section
+    services_title: Optional[str] = None
+    services_subtitle: Optional[str] = None
+    # Projects Section
+    projects_title: Optional[str] = None
+    projects_subtitle: Optional[str] = None
+    # About Section
+    about_title: Optional[str] = None
+    about_subtitle: Optional[str] = None
+    about_description: Optional[str] = None
+    founder_name: Optional[str] = None
+    founder_title: Optional[str] = None
+    founder_bio: Optional[str] = None
+    founder_imdb_url: Optional[str] = None
+    # CTA Section
+    cta_title: Optional[str] = None
+    cta_subtitle: Optional[str] = None
+    cta_button_text: Optional[str] = None
+    # Footer
+    footer_tagline: Optional[str] = None
+    copyright_text: Optional[str] = None
+    # Booking Page
+    booking_title: Optional[str] = None
+    booking_subtitle: Optional[str] = None
+    # Logo
+    logo_url: Optional[str] = None
+    logo_alt: Optional[str] = None
+
+class AdminApprovalRequest(BaseModel):
+    email: EmailStr
+    name: str
+
 # =========================
 # AUTH HELPERS
 # =========================
