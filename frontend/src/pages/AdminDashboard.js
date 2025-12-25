@@ -1168,13 +1168,14 @@ const AdminManagement = () => {
     }
   };
 
-  const toggleAccess = async (adminId, hasFullAccess) => {
+  const toggleAccess = async (adminId, currentAccessLevel) => {
+    const newAccessLevel = currentAccessLevel === 'full' ? 'basic' : 'full';
     try {
       await axios.put(`${API}/admin/${adminId}/access`, 
-        { admin_id: adminId, has_full_access: !hasFullAccess },
+        { access_level: newAccessLevel },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      toast.success(`Access ${!hasFullAccess ? 'granted' : 'revoked'}`);
+      toast.success(`Access updated to ${newAccessLevel}`);
       fetchAdmins();
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Failed to update access');
