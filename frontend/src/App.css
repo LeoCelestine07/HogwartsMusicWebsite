@@ -1,34 +1,75 @@
-.App-logo {
-    height: 40vmin;
-    pointer-events: none;
+/* App-specific styles */
+.App {
+  min-height: 100vh;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-    .App-logo {
-        animation: App-logo-spin infinite 20s linear;
-    }
+/* Additional animation utilities */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
 }
 
-.App-header {
-    background-color: #0f0f10;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.05) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
 }
 
-.App-link {
-    color: #61dafb;
+/* Line clamp utilities */
+.line-clamp-1 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
 }
 
-@keyframes App-logo-spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
+.line-clamp-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.line-clamp-3 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+/* Calendar dark theme override */
+.rdp {
+  --rdp-cell-size: 40px;
+  --rdp-accent-color: #00f0ff;
+  --rdp-background-color: rgba(0, 240, 255, 0.1);
+}
+
+.rdp-day_selected {
+  background: linear-gradient(135deg, #00f0ff 0%, #bc13fe 100%) !important;
+  color: black !important;
+}
+
+.rdp-day:hover:not(.rdp-day_selected) {
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+.rdp-button:focus-visible {
+  outline: 2px solid #00f0ff;
+  outline-offset: 2px;
+}
+
+/* OTP Input styling */
+[data-input-otp-container] {
+  gap: 8px;
+}
+
+/* Toaster custom */
+[data-sonner-toaster] {
+  --normal-bg: rgba(10, 10, 18, 0.95);
+  --normal-border: rgba(255, 255, 255, 0.1);
 }
