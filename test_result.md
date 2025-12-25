@@ -362,18 +362,19 @@ frontend:
 metadata:
   created_by: "main_agent"
   version: "1.0"
-  test_sequence: 7
+  test_sequence: 8
   run_ui: true
 
 test_plan:
   current_focus:
-    - "Navbar rectangular shape (not round)"
-    - "Services page customizable in Content tab"
-    - "About page fully customizable including philosophy and bullet points"
+    - "Projects page customization with stats"
+    - "About page timeline/story customization"
+    - "Admin sidebar scrolling fix"
+    - "Job application acceptance email"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
 
 agent_communication:
   - agent: "main"
-    message: "Implemented: 1) Changed navbar from rounded-full to rounded-2xl for rectangular shape, 2) Added Services Page section in Content tab (page badge, title, title_gradient, subtitle, cta_title, cta_subtitle, cta_button), 3) Added comprehensive About Page section in Content tab (page badge, title, title_gradient, description, philosophy_title, philosophy_text, feature1, feature2, feature3, values_badge, values_title, journey_badge, journey_title, cta_title, cta_title_gradient, cta_subtitle, cta_button), 4) Added Founder Section fields (badge, section_title, name, title, bio, imdb_url, imdb_text). Admin credentials: leocelestine.s@gmail.com / Admin123!"
+    message: "Implemented: 1) Projects page now fully customizable (page badge, title, title_gradient, subtitle, 4 stats with values and labels), 2) About page timeline/story section now customizable (4 entries with year, title, description each), 3) Admin sidebar fixed to stay visible when page scrolls, 4) Job application acceptance sends offer letter style email when status set to 'hired'. Admin credentials: leocelestine.s@gmail.com / Admin123!"
