@@ -1,8 +1,8 @@
 {
-  "timestamp": "2025-12-25T13:46:17.348240",
-  "total_tests": 33,
-  "passed_tests": 31,
-  "success_rate": 93.93939393939394,
+  "timestamp": "2025-12-25T14:22:22.971718",
+  "total_tests": 32,
+  "passed_tests": 30,
+  "success_rate": 93.75,
   "results": [
     {
       "test": "Root API",
@@ -56,18 +56,13 @@
     },
     {
       "test": "Get Projects",
-      "success": true,
-      "details": "Status: 200"
+      "success": false,
+      "details": "Status: 520 (Expected 200) - Internal Server Error"
     },
     {
       "test": "Projects Count (\u22655)",
-      "success": true,
-      "details": "Found 5 projects"
-    },
-    {
-      "test": "Featured Projects (\u22655)",
-      "success": true,
-      "details": "Found 5 featured"
+      "success": false,
+      "details": "Found 0 projects"
     },
     {
       "test": "User Registration",
@@ -131,13 +126,13 @@
     },
     {
       "test": "Booking Creation",
-      "success": false,
-      "details": "Status: 520 (Expected 200) - Internal Server Error"
+      "success": true,
+      "details": "Status: 200"
     },
     {
       "test": "Booking Response Format",
-      "success": false,
-      "details": "Missing booking in response"
+      "success": true,
+      "details": ""
     },
     {
       "test": "Admin OTP Request",
@@ -157,7 +152,7 @@
     {
       "test": "Chat Response Content",
       "success": true,
-      "details": "Response length: 676"
+      "details": "Response length: 607"
     },
     {
       "test": "Get User Profile",
