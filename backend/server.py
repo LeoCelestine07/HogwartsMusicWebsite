@@ -139,6 +139,8 @@ class SiteSettingsUpdate(BaseModel):
     projects_title: Optional[str] = None
     cta_title: Optional[str] = None
     cta_subtitle: Optional[str] = None
+    background_type: Optional[str] = None  # gradient, solid, texture, image
+    background_value: Optional[str] = None  # color hex or image URL
 
 class AdminAccessUpdate(BaseModel):
     access_level: str  # "basic", "full", "super"
