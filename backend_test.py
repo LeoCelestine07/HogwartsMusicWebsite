@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 import uuid
 
 class HogwartsAPITester:
-    def __init__(self, base_url="https://audio-haven-21.preview.emergentagent.com"):
+    def __init__(self, base_url="https://melody-craft-35.preview.emergentagent.com"):
         self.base_url = base_url
         self.api_url = f"{base_url}/api"
         self.token = None
