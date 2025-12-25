@@ -5,7 +5,7 @@ import {
   LayoutDashboard, Calendar, Briefcase, Image, Settings, LogOut, 
   Users, Clock, CheckCircle, XCircle, MoreVertical, Edit, Trash2,
   Plus, Search, Filter, Loader2, Upload, Shield, Palette, UserCheck,
-  DollarSign, Save, X, Eye, EyeOff
+  DollarSign, Save, X, Eye, EyeOff, FileText, Phone, Ban, UserX
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '../context/AuthContext';
