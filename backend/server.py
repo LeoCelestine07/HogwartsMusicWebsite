@@ -1,5 +1,6 @@
-from fastapi import FastAPI, APIRouter, HTTPException, Depends, status
+from fastapi import FastAPI, APIRouter, HTTPException, Depends, status, UploadFile, File, Form
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -16,9 +17,15 @@ import bcrypt
 import resend
 import random
 import string
+import base64
+import shutil
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
+
+# Create uploads directory
+UPLOAD_DIR = ROOT_DIR / "uploads"
+UPLOAD_DIR.mkdir(exist_ok=True)
 
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
@@ -29,6 +36,7 @@ db = client[os.environ['DB_NAME']]
 resend.api_key = os.environ.get('RESEND_API_KEY')
 SENDER_EMAIL = os.environ.get('SENDER_EMAIL', 'onboarding@resend.dev')
 ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL', 'leocelestine.s@gmail.com')
+SUPER_ADMIN_EMAIL = "leocelestine.s@gmail.com"  # The main super admin
 ADMIN_PHONE = os.environ.get('ADMIN_PHONE', '9600130807')
 JWT_SECRET = os.environ.get('JWT_SECRET', 'hogwarts_secret')
 EMERGENT_LLM_KEY = os.environ.get('EMERGENT_LLM_KEY')
@@ -41,6 +49,9 @@ security = HTTPBearer(auto_error=False)
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# Mount static files for uploads
+app.mount("/uploads", StaticFiles(directory=str(UPLOAD_DIR)), name="uploads")
 
 # =========================
 # MODELS
@@ -92,6 +103,14 @@ class ServiceCreate(BaseModel):
     icon: str = "mic"
     image_url: Optional[str] = None
 
+class ServiceUpdate(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+    price: Optional[str] = None
+    price_type: Optional[str] = None
+    icon: Optional[str] = None
+    image_url: Optional[str] = None
+
 class ProjectModel(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     name: str
@@ -107,6 +126,13 @@ class ProjectCreate(BaseModel):
     work_type: str
     image_url: str
     featured: bool = True
+
+class ProjectUpdate(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+    work_type: Optional[str] = None
+    image_url: Optional[str] = None
+    featured: Optional[bool] = None
 
 class BookingCreate(BaseModel):
     full_name: str
@@ -137,6 +163,25 @@ class BookingStatusUpdate(BaseModel):
 class ChatMessage(BaseModel):
     message: str
     session_id: Optional[str] = None
+
+class SiteSettings(BaseModel):
+    id: str = "main"
+    background_type: str = "gradient"  # "solid", "gradient", "texture", "image"
+    background_value: str = "default"
+    primary_color: str = "#00d4d4"
+    secondary_color: str = "#f97316"
+    accent_color: str = "#14b8a6"
+
+class SiteSettingsUpdate(BaseModel):
+    background_type: Optional[str] = None
+    background_value: Optional[str] = None
+    primary_color: Optional[str] = None
+    secondary_color: Optional[str] = None
+    accent_color: Optional[str] = None
+
+class AdminApproval(BaseModel):
+    admin_id: str
+    has_full_access: bool
 
 # =========================
 # AUTH HELPERS
@@ -176,6 +221,35 @@ async def get_current_admin(credentials: HTTPAuthorizationCredentials = Depends(
         raise HTTPException(status_code=403, detail="Admin access required")
     return payload
 
+async def get_super_admin(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    """Only allows the super admin (leocelestine.s@gmail.com)"""
+    if not credentials:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    payload = decode_token(credentials.credentials)
+    if payload.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Admin access required")
+    if payload.get("email") != SUPER_ADMIN_EMAIL:
+        raise HTTPException(status_code=403, detail="Super admin access required")
+    return payload
+
+async def get_admin_with_full_access(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    """Allows super admin or approved admins with full access"""
+    if not credentials:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    payload = decode_token(credentials.credentials)
+    if payload.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    # Super admin always has full access
+    if payload.get("email") == SUPER_ADMIN_EMAIL:
+        return payload
+    
+    # Check if admin has been granted full access
+    admin = await db.admins.find_one({"id": payload.get("admin_id")}, {"_id": 0})
+    if not admin or not admin.get("has_full_access", False):
+        raise HTTPException(status_code=403, detail="Full website access not granted")
+    return payload
+
 def generate_otp() -> str:
     return ''.join(random.choices(string.digits, k=6))
 
@@ -197,6 +271,22 @@ async def send_email(to: str, subject: str, html: str):
     except Exception as e:
         logger.error(f"Email error: {str(e)}")
         return None
+
+# =========================
+# FILE UPLOAD HELPER
+# =========================
+
+async def save_upload_file(file: UploadFile) -> str:
+    """Save uploaded file and return the URL path"""
+    file_extension = file.filename.split(".")[-1] if "." in file.filename else "jpg"
+    unique_filename = f"{uuid.uuid4()}.{file_extension}"
+    file_path = UPLOAD_DIR / unique_filename
+    
+    with open(file_path, "wb") as buffer:
+        content = await file.read()
+        buffer.write(content)
+    
+    return f"/uploads/{unique_filename}"
 
 # =========================
 # USER AUTH ROUTES
@@ -235,6 +325,8 @@ async def get_me(current_user: dict = Depends(get_current_user)):
         if admin_id:
             admin = await db.admins.find_one({"id": admin_id}, {"_id": 0, "password": 0})
             if admin:
+                # Add super admin flag
+                admin["is_super_admin"] = admin.get("email") == SUPER_ADMIN_EMAIL
                 return {"user": admin, "role": "admin"}
     
     # Check regular user
@@ -252,8 +344,10 @@ async def get_me(current_user: dict = Depends(get_current_user)):
 
 @api_router.post("/admin/request-otp")
 async def request_admin_otp(data: AdminOTPRequest):
-    if data.email != ADMIN_EMAIL:
-        raise HTTPException(status_code=403, detail="Unauthorized email for admin registration")
+    # Allow only super admin email for initial registration, or existing admins can request
+    existing_admin = await db.admins.find_one({}, {"_id": 0})
+    if not existing_admin and data.email != SUPER_ADMIN_EMAIL:
+        raise HTTPException(status_code=403, detail="First admin must be the super admin email")
     
     otp = generate_otp()
     expires = datetime.now(timezone.utc) + timedelta(minutes=10)
@@ -266,10 +360,10 @@ async def request_admin_otp(data: AdminOTPRequest):
     })
     
     html = f"""
-    <div style="font-family: sans-serif; padding: 20px; background: #0a0a12; color: white;">
-        <h2 style="color: #00f0ff;">Hogwarts Music Studio - Admin Verification</h2>
+    <div style="font-family: sans-serif; padding: 20px; background: #0a1a1f; color: white;">
+        <h2 style="color: #00d4d4;">Hogwarts Music Studio - Admin Verification</h2>
         <p>Your OTP code is:</p>
-        <h1 style="color: #bc13fe; letter-spacing: 8px;">{otp}</h1>
+        <h1 style="color: #f97316; letter-spacing: 8px;">{otp}</h1>
         <p>This code expires in 10 minutes.</p>
     </div>
     """
@@ -278,9 +372,6 @@ async def request_admin_otp(data: AdminOTPRequest):
 
 @api_router.post("/admin/verify-otp")
 async def verify_admin_otp(data: AdminOTPVerify):
-    if data.email != ADMIN_EMAIL:
-        raise HTTPException(status_code=403, detail="Unauthorized email")
-    
     otp_doc = await db.otp_codes.find_one({"email": data.email, "otp": data.otp}, {"_id": 0})
     if not otp_doc:
         raise HTTPException(status_code=400, detail="Invalid OTP")
@@ -292,18 +383,23 @@ async def verify_admin_otp(data: AdminOTPVerify):
     if existing:
         raise HTTPException(status_code=400, detail="Admin already exists")
     
+    # Check if this is the super admin
+    is_super_admin = data.email == SUPER_ADMIN_EMAIL
+    
     admin_doc = {
         "id": str(uuid.uuid4()),
         "name": data.name,
         "email": data.email,
         "password": hash_password(data.password),
+        "is_super_admin": is_super_admin,
+        "has_full_access": is_super_admin,  # Super admin always has full access
         "created_at": datetime.now(timezone.utc).isoformat()
     }
     await db.admins.insert_one(admin_doc)
     await db.otp_codes.delete_many({"email": data.email})
     
     token = create_token({"admin_id": admin_doc["id"], "email": data.email, "role": "admin"})
-    return {"token": token, "admin": {"id": admin_doc["id"], "name": data.name, "email": data.email}}
+    return {"token": token, "admin": {"id": admin_doc["id"], "name": data.name, "email": data.email, "is_super_admin": is_super_admin}}
 
 @api_router.post("/admin/login")
 async def admin_login(data: AdminLogin):
@@ -311,10 +407,82 @@ async def admin_login(data: AdminLogin):
     if not admin or not verify_password(data.password, admin["password"]):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     token = create_token({"admin_id": admin["id"], "email": admin["email"], "role": "admin"})
-    return {"token": token, "admin": {"id": admin["id"], "name": admin["name"], "email": admin["email"]}}
+    return {
+        "token": token, 
+        "admin": {
+            "id": admin["id"], 
+            "name": admin["name"], 
+            "email": admin["email"],
+            "is_super_admin": admin.get("is_super_admin", admin["email"] == SUPER_ADMIN_EMAIL),
+            "has_full_access": admin.get("has_full_access", admin["email"] == SUPER_ADMIN_EMAIL)
+        }
+    }
 
 # =========================
-# SERVICES ROUTES
+# ADMIN MANAGEMENT (Super Admin Only)
+# =========================
+
+@api_router.get("/admin/list")
+async def list_admins(super_admin: dict = Depends(get_super_admin)):
+    """List all admins - Super admin only"""
+    admins = await db.admins.find({}, {"_id": 0, "password": 0}).to_list(100)
+    return admins
+
+@api_router.put("/admin/{admin_id}/access")
+async def update_admin_access(admin_id: str, approval: AdminApproval, super_admin: dict = Depends(get_super_admin)):
+    """Grant or revoke full website access to an admin - Super admin only"""
+    admin = await db.admins.find_one({"id": admin_id}, {"_id": 0})
+    if not admin:
+        raise HTTPException(status_code=404, detail="Admin not found")
+    
+    if admin.get("email") == SUPER_ADMIN_EMAIL:
+        raise HTTPException(status_code=400, detail="Cannot modify super admin access")
+    
+    await db.admins.update_one(
+        {"id": admin_id},
+        {"$set": {"has_full_access": approval.has_full_access}}
+    )
+    
+    return {"message": f"Admin access {'granted' if approval.has_full_access else 'revoked'}", "admin_id": admin_id}
+
+@api_router.delete("/admin/{admin_id}")
+async def delete_admin(admin_id: str, super_admin: dict = Depends(get_super_admin)):
+    """Delete an admin - Super admin only"""
+    admin = await db.admins.find_one({"id": admin_id}, {"_id": 0})
+    if not admin:
+        raise HTTPException(status_code=404, detail="Admin not found")
+    
+    if admin.get("email") == SUPER_ADMIN_EMAIL:
+        raise HTTPException(status_code=400, detail="Cannot delete super admin")
+    
+    await db.admins.delete_one({"id": admin_id})
+    return {"message": "Admin deleted"}
+
+# =========================
+# FILE UPLOAD ROUTES
+# =========================
+
+@api_router.post("/upload/image")
+async def upload_image(file: UploadFile = File(...), admin: dict = Depends(get_admin_with_full_access)):
+    """Upload an image file - Returns the URL"""
+    if not file.content_type.startswith("image/"):
+        raise HTTPException(status_code=400, detail="File must be an image")
+    
+    # Check file size (max 5MB)
+    content = await file.read()
+    if len(content) > 5 * 1024 * 1024:
+        raise HTTPException(status_code=400, detail="File size must be less than 5MB")
+    
+    # Reset file position
+    await file.seek(0)
+    
+    file_url = await save_upload_file(file)
+    
+    # Return full URL
+    return {"url": file_url, "message": "Image uploaded successfully"}
+
+# =========================
+# SERVICES ROUTES (with upload support)
 # =========================
 
 @api_router.get("/services", response_model=List[dict])
@@ -336,40 +504,44 @@ async def get_services():
     return services
 
 @api_router.post("/services", response_model=dict)
-async def create_service(service: ServiceCreate, admin: dict = Depends(get_current_admin)):
+async def create_service(service: ServiceCreate, admin: dict = Depends(get_admin_with_full_access)):
     service_doc = ServiceModel(**service.model_dump()).model_dump()
     await db.services.insert_one(service_doc)
-    return service_doc
+    created = await db.services.find_one({"id": service_doc["id"]}, {"_id": 0})
+    return created
 
 @api_router.put("/services/{service_id}", response_model=dict)
-async def update_service(service_id: str, service: ServiceCreate, admin: dict = Depends(get_current_admin)):
+async def update_service(service_id: str, service: ServiceUpdate, admin: dict = Depends(get_admin_with_full_access)):
+    update_data = {k: v for k, v in service.model_dump().items() if v is not None}
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No update data provided")
+    
     result = await db.services.update_one(
         {"id": service_id},
-        {"$set": service.model_dump()}
+        {"$set": update_data}
     )
-    if result.modified_count == 0:
+    if result.matched_count == 0:
         raise HTTPException(status_code=404, detail="Service not found")
     updated = await db.services.find_one({"id": service_id}, {"_id": 0})
     return updated
 
 @api_router.delete("/services/{service_id}")
-async def delete_service(service_id: str, admin: dict = Depends(get_current_admin)):
+async def delete_service(service_id: str, admin: dict = Depends(get_admin_with_full_access)):
     result = await db.services.delete_one({"id": service_id})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Service not found")
     return {"message": "Service deleted"}
 
 # =========================
-# PROJECTS ROUTES
+# PROJECTS ROUTES (with upload support)
 # =========================
 
 @api_router.get("/projects", response_model=List[dict])
 async def get_projects():
     projects = await db.projects.find({}, {"_id": 0}).to_list(100)
     if not projects:
-        # Seed default projects
         default_projects = [
-            {"id": str(uuid.uuid4()), "name": "The Midnight Chronicles", "description": "Complete audio post-production for an indie feature film.", "work_type": "Mixing & Mastering", "image_url": "https://images.unsplash.com/photo-598488035139-bdbb2231ce04?auto=format&fit=crop&q=80", "featured": True, "created_at": datetime.now(timezone.utc).isoformat()},
+            {"id": str(uuid.uuid4()), "name": "The Midnight Chronicles", "description": "Complete audio post-production for an indie feature film.", "work_type": "Mixing & Mastering", "image_url": "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&q=80", "featured": True, "created_at": datetime.now(timezone.utc).isoformat()},
             {"id": str(uuid.uuid4()), "name": "Echoes of Tomorrow", "description": "Original soundtrack composition and production.", "work_type": "Music Production", "image_url": "https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?auto=format&fit=crop&q=80", "featured": True, "created_at": datetime.now(timezone.utc).isoformat()},
             {"id": str(uuid.uuid4()), "name": "Voice of India", "description": "Hindi dubbing for international documentary series.", "work_type": "Dubbing", "image_url": "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&q=80", "featured": True, "created_at": datetime.now(timezone.utc).isoformat()},
             {"id": str(uuid.uuid4()), "name": "Neon Dreams Album", "description": "Full album production for electronic music artist.", "work_type": "Music Production", "image_url": "https://images.unsplash.com/photo-1493225255756-d9584f8606e9?auto=format&fit=crop&q=80", "featured": True, "created_at": datetime.now(timezone.utc).isoformat()},
@@ -381,28 +553,69 @@ async def get_projects():
     return projects
 
 @api_router.post("/projects", response_model=dict)
-async def create_project(project: ProjectCreate, admin: dict = Depends(get_current_admin)):
+async def create_project(project: ProjectCreate, admin: dict = Depends(get_admin_with_full_access)):
     project_doc = ProjectModel(**project.model_dump()).model_dump()
     await db.projects.insert_one(project_doc)
-    return project_doc
+    created = await db.projects.find_one({"id": project_doc["id"]}, {"_id": 0})
+    return created
 
 @api_router.put("/projects/{project_id}", response_model=dict)
-async def update_project(project_id: str, project: ProjectCreate, admin: dict = Depends(get_current_admin)):
+async def update_project(project_id: str, project: ProjectUpdate, admin: dict = Depends(get_admin_with_full_access)):
+    update_data = {k: v for k, v in project.model_dump().items() if v is not None}
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No update data provided")
+    
     result = await db.projects.update_one(
         {"id": project_id},
-        {"$set": project.model_dump()}
+        {"$set": update_data}
     )
-    if result.modified_count == 0:
+    if result.matched_count == 0:
         raise HTTPException(status_code=404, detail="Project not found")
     updated = await db.projects.find_one({"id": project_id}, {"_id": 0})
     return updated
 
 @api_router.delete("/projects/{project_id}")
-async def delete_project(project_id: str, admin: dict = Depends(get_current_admin)):
+async def delete_project(project_id: str, admin: dict = Depends(get_admin_with_full_access)):
     result = await db.projects.delete_one({"id": project_id})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Project not found")
     return {"message": "Project deleted"}
+
+# =========================
+# SITE SETTINGS ROUTES
+# =========================
+
+@api_router.get("/settings/site")
+async def get_site_settings():
+    """Get site settings (public)"""
+    settings = await db.site_settings.find_one({"id": "main"}, {"_id": 0})
+    if not settings:
+        # Default settings
+        settings = {
+            "id": "main",
+            "background_type": "gradient",
+            "background_value": "default",
+            "primary_color": "#00d4d4",
+            "secondary_color": "#f97316",
+            "accent_color": "#14b8a6"
+        }
+        await db.site_settings.insert_one(settings)
+    return settings
+
+@api_router.put("/settings/site")
+async def update_site_settings(settings: SiteSettingsUpdate, admin: dict = Depends(get_admin_with_full_access)):
+    """Update site settings - Requires full access"""
+    update_data = {k: v for k, v in settings.model_dump().items() if v is not None}
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No update data provided")
+    
+    await db.site_settings.update_one(
+        {"id": "main"},
+        {"$set": update_data},
+        upsert=True
+    )
+    updated = await db.site_settings.find_one({"id": "main"}, {"_id": 0})
+    return updated
 
 # =========================
 # BOOKINGS ROUTES
@@ -411,17 +624,16 @@ async def delete_project(project_id: str, admin: dict = Depends(get_current_admi
 @api_router.post("/bookings", response_model=dict)
 async def create_booking(booking: BookingCreate):
     booking_doc = BookingModel(**booking.model_dump()).model_dump()
-    result = await db.bookings.insert_one(booking_doc)
-    # Get the inserted document without _id
+    await db.bookings.insert_one(booking_doc)
     inserted_booking = await db.bookings.find_one({"id": booking_doc["id"]}, {"_id": 0})
     
     # Send confirmation email to user
     user_html = f"""
-    <div style="font-family: 'Manrope', sans-serif; padding: 40px; background: linear-gradient(135deg, #030305 0%, #0a0a12 100%); color: white; border-radius: 16px;">
-        <h1 style="color: #00f0ff; margin-bottom: 24px;">Booking Confirmed!</h1>
+    <div style="font-family: 'Manrope', sans-serif; padding: 40px; background: linear-gradient(135deg, #0a1a1f 0%, #0d2229 100%); color: white; border-radius: 16px;">
+        <h1 style="color: #00d4d4; margin-bottom: 24px;">Booking Confirmed!</h1>
         <p style="color: rgba(255,255,255,0.8); font-size: 16px;">Thank you for booking with Hogwarts Music Studio.</p>
         <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 24px; margin: 24px 0;">
-            <h3 style="color: #bc13fe; margin-bottom: 16px;">Booking Details</h3>
+            <h3 style="color: #f97316; margin-bottom: 16px;">Booking Details</h3>
             <p><strong>Service:</strong> {booking.service_name}</p>
             <p><strong>Date:</strong> {booking.preferred_date}</p>
             <p><strong>Time:</strong> {booking.preferred_time}</p>
@@ -434,8 +646,8 @@ async def create_booking(booking: BookingCreate):
     
     # Send notification to admin
     admin_html = f"""
-    <div style="font-family: 'Manrope', sans-serif; padding: 40px; background: #030305; color: white;">
-        <h1 style="color: #00f0ff;">New Booking Received!</h1>
+    <div style="font-family: 'Manrope', sans-serif; padding: 40px; background: #0a1a1f; color: white;">
+        <h1 style="color: #00d4d4;">New Booking Received!</h1>
         <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 24px; margin: 24px 0;">
             <p><strong>Client:</strong> {booking.full_name}</p>
             <p><strong>Email:</strong> {booking.email}</p>
@@ -453,6 +665,7 @@ async def create_booking(booking: BookingCreate):
 
 @api_router.get("/bookings", response_model=List[dict])
 async def get_all_bookings(admin: dict = Depends(get_current_admin)):
+    """All admins can see bookings"""
     bookings = await db.bookings.find({}, {"_id": 0}).sort("created_at", -1).to_list(1000)
     return bookings
 
@@ -470,10 +683,17 @@ async def update_booking_status(booking_id: str, status_update: BookingStatusUpd
         {"id": booking_id},
         {"$set": {"status": status_update.status}}
     )
-    if result.modified_count == 0:
+    if result.matched_count == 0:
         raise HTTPException(status_code=404, detail="Booking not found")
     updated = await db.bookings.find_one({"id": booking_id}, {"_id": 0})
     return updated
+
+@api_router.delete("/bookings/{booking_id}")
+async def delete_booking(booking_id: str, admin: dict = Depends(get_current_admin)):
+    result = await db.bookings.delete_one({"id": booking_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Booking not found")
+    return {"message": "Booking deleted"}
 
 # =========================
 # CHAT (AI) ROUTES
@@ -486,7 +706,6 @@ async def chat_with_ai(data: ChatMessage):
         
         session_id = data.session_id or str(uuid.uuid4())
         
-        # Get services for context
         services = await db.services.find({}, {"_id": 0, "name": 1, "description": 1, "price": 1}).to_list(10)
         services_context = "\n".join([f"- {s['name']}: {s['description']} (Price: {s.get('price', 'Contact for pricing')})" for s in services])
         
@@ -528,6 +747,7 @@ async def get_admin_stats(admin: dict = Depends(get_current_admin)):
     completed_bookings = await db.bookings.count_documents({"status": "completed"})
     total_services = await db.services.count_documents({})
     total_projects = await db.projects.count_documents({})
+    total_admins = await db.admins.count_documents({})
     
     return {
         "total_bookings": total_bookings,
@@ -535,7 +755,8 @@ async def get_admin_stats(admin: dict = Depends(get_current_admin)):
         "confirmed_bookings": confirmed_bookings,
         "completed_bookings": completed_bookings,
         "total_services": total_services,
-        "total_projects": total_projects
+        "total_projects": total_projects,
+        "total_admins": total_admins
     }
 
 # =========================
