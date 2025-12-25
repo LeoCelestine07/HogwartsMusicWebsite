@@ -2727,8 +2727,8 @@ const AdminDashboard = () => {
     <div className="min-h-screen bg-[#0a1a1f] pt-28" data-testid="admin-dashboard">
       <div className="flex">
         {/* Sidebar */}
-        <aside className="w-64 fixed left-0 top-28 bottom-0 border-r border-white/5 p-6 hidden lg:block overflow-y-auto">
-          <div className="sticky top-0 pb-6">
+        <aside className="w-64 fixed left-0 top-28 bottom-0 border-r border-white/5 hidden lg:flex lg:flex-col">
+          <div className="flex-1 overflow-y-auto p-6 pb-32">
             {/* Admin Badge */}
             {isSuperAdmin && (
               <div className="mb-6 p-3 rounded-xl bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/30">
@@ -2739,7 +2739,7 @@ const AdminDashboard = () => {
               </div>
             )}
 
-            <div className="space-y-2">
+            <nav className="space-y-2">
             {navItems.map((item) => (
               <Link
                 key={item.path}
@@ -2758,10 +2758,10 @@ const AdminDashboard = () => {
                 )}
               </Link>
             ))}
-          </div>
+            </nav>
           </div>
 
-          <div className="absolute bottom-6 left-6 right-6">
+          <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-[#0a1a1f] via-[#0a1a1f] to-transparent pt-12">
             <div className="glass rounded-xl p-4 border border-white/10 mb-4">
               <p className="text-sm text-white/60">Logged in as</p>
               <p className="font-semibold truncate">{user?.name}</p>
