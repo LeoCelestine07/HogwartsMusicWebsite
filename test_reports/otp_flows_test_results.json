@@ -1,0 +1,118 @@
+{
+  "timestamp": "2025-12-25T16:05:16.354503",
+  "total_tests": 22,
+  "passed_tests": 16,
+  "success_rate": 72.72727272727273,
+  "results": [
+    {
+      "test": "Admin Forgot Password Request",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Admin Forgot Password Response Format",
+      "success": true,
+      "details": "OTP request successful"
+    },
+    {
+      "test": "Admin Forgot Password Invalid Email",
+      "success": true,
+      "details": "Status: 404"
+    },
+    {
+      "test": "User Registration for Forgot Password Test",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "User Forgot Password Request",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "User Forgot Password Response Format",
+      "success": true,
+      "details": "OTP request successful"
+    },
+    {
+      "test": "User Forgot Password Invalid Email",
+      "success": true,
+      "details": "Status: 404"
+    },
+    {
+      "test": "Admin Initial OTP Request",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Admin Resend OTP",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Admin Resend OTP Response Format",
+      "success": true,
+      "details": "Resend successful"
+    },
+    {
+      "test": "Get Services for Hours Check",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Dubbing Requires Hours Flag",
+      "success": false,
+      "details": "requires_hours = None"
+    },
+    {
+      "test": "Dubbing Hourly Price",
+      "success": true,
+      "details": "\u20b9299/hr"
+    },
+    {
+      "test": "Vocal Recording Requires Hours Flag",
+      "success": false,
+      "details": "requires_hours = None"
+    },
+    {
+      "test": "Vocal Recording Hourly Price",
+      "success": false,
+      "details": "Expected \u20b9399/hr, got \u20b9299/hr"
+    },
+    {
+      "test": "Get Services for Hours Check",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Dubbing Requires Hours Flag",
+      "success": false,
+      "details": "requires_hours = None"
+    },
+    {
+      "test": "Dubbing Hourly Price",
+      "success": true,
+      "details": "\u20b9299/hr"
+    },
+    {
+      "test": "Vocal Recording Requires Hours Flag",
+      "success": false,
+      "details": "requires_hours = None"
+    },
+    {
+      "test": "Vocal Recording Hourly Price",
+      "success": false,
+      "details": "Expected \u20b9399/hr, got \u20b9299/hr"
+    },
+    {
+      "test": "Booking Creation with Hours",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Booking Hours Saved",
+      "success": true,
+      "details": "3 hours saved correctly"
+    }
+  ]
+}
