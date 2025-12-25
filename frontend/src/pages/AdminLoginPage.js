@@ -67,8 +67,8 @@ const AdminLoginPage = () => {
 
     setLoading(true);
     try {
-      await axios.post(`${API}/admin/request-otp`, { email: formData.email });
-      toast.success('OTP sent to your email!');
+      const response = await axios.post(`${API}/admin/request-otp`, { email: formData.email });
+      toast.success(response.data.message);
       setMode('otp');
       startCountdown();
     } catch (error) {
