@@ -1301,7 +1301,332 @@ const AdminManagement = () => {
           <li><strong className="text-amber-400">Super Admin:</strong> Full website control, can manage all admins</li>
           <li><strong className="text-green-400">Full Access Admin:</strong> Can edit services, projects, and site settings</li>
           <li><strong className="text-cyan-400">Basic Admin:</strong> Can only view and manage bookings</li>
+          <li><strong className="text-red-400">Suspended:</strong> Account is temporarily disabled</li>
         </ul>
+      </div>
+    </div>
+  );
+};
+
+// =====================
+// Content Management (Super Admin Only)
+// =====================
+const ContentManagement = () => {
+  const [content, setContent] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const { token } = useAuth();
+
+  useEffect(() => {
+    fetchContent();
+  }, []);
+
+  const fetchContent = async () => {
+    try {
+      const response = await axios.get(`${API}/settings/content`);
+      setContent(response.data);
+    } catch (error) {
+      toast.error('Failed to fetch content');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      await axios.put(`${API}/settings/content`, content, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      toast.success('Content saved! Changes will reflect on the website.');
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to save content');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="w-8 h-8 animate-spin text-cyan-400" />
+      </div>
+    );
+  }
+
+  const ContentSection = ({ title, children }) => (
+    <div className="glass rounded-xl p-6 border border-white/10">
+      <h3 className="font-bold text-lg mb-4 text-cyan-400">{title}</h3>
+      <div className="space-y-4">
+        {children}
+      </div>
+    </div>
+  );
+
+  const InputField = ({ label, field, textarea = false }) => (
+    <div>
+      <label className="block text-sm text-white/60 mb-2">{label}</label>
+      {textarea ? (
+        <textarea
+          value={content?.[field] || ''}
+          onChange={(e) => setContent({ ...content, [field]: e.target.value })}
+          rows={3}
+          className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-cyan-500/50 resize-none"
+        />
+      ) : (
+        <input
+          type="text"
+          value={content?.[field] || ''}
+          onChange={(e) => setContent({ ...content, [field]: e.target.value })}
+          className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-cyan-500/50"
+        />
+      )}
+    </div>
+  );
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">Content Management</h1>
+          <p className="text-white/50 text-sm mt-1">Edit all text content on the website</p>
+        </div>
+        <button
+          onClick={handleSave}
+          disabled={saving}
+          className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-teal-500 text-black font-semibold hover:scale-105 transition-transform disabled:opacity-50"
+        >
+          {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+          Save All Changes
+        </button>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <ContentSection title="Logo & Branding">
+          <InputField label="Logo URL" field="logo_url" />
+          <InputField label="Logo Alt Text" field="logo_alt" />
+        </ContentSection>
+
+        <ContentSection title="Navigation Labels">
+          <InputField label="Home" field="nav_home" />
+          <InputField label="Services" field="nav_services" />
+          <InputField label="Projects" field="nav_projects" />
+          <InputField label="About" field="nav_about" />
+          <InputField label="Book Session" field="nav_booking" />
+        </ContentSection>
+
+        <ContentSection title="Hero Section">
+          <InputField label="Title" field="hero_title" />
+          <InputField label="Gradient Title" field="hero_title_gradient" />
+          <InputField label="Subtitle" field="hero_subtitle" textarea />
+          <InputField label="CTA Button Text" field="hero_cta_text" />
+        </ContentSection>
+
+        <ContentSection title="Services Section">
+          <InputField label="Section Title" field="services_title" />
+          <InputField label="Section Subtitle" field="services_subtitle" />
+        </ContentSection>
+
+        <ContentSection title="Projects Section">
+          <InputField label="Section Title" field="projects_title" />
+          <InputField label="Section Subtitle" field="projects_subtitle" />
+        </ContentSection>
+
+        <ContentSection title="About Section">
+          <InputField label="Section Title" field="about_title" />
+          <InputField label="Section Subtitle" field="about_subtitle" />
+          <InputField label="Description" field="about_description" textarea />
+        </ContentSection>
+
+        <ContentSection title="Founder Info">
+          <InputField label="Founder Name" field="founder_name" />
+          <InputField label="Founder Title" field="founder_title" />
+          <InputField label="Founder Bio" field="founder_bio" textarea />
+          <InputField label="IMDB URL" field="founder_imdb_url" />
+        </ContentSection>
+
+        <ContentSection title="Call to Action Section">
+          <InputField label="CTA Title" field="cta_title" />
+          <InputField label="CTA Subtitle" field="cta_subtitle" />
+          <InputField label="CTA Button Text" field="cta_button_text" />
+        </ContentSection>
+
+        <ContentSection title="Footer">
+          <InputField label="Footer Tagline" field="footer_tagline" textarea />
+          <InputField label="Copyright Text" field="copyright_text" />
+        </ContentSection>
+
+        <ContentSection title="Booking Page">
+          <InputField label="Page Title" field="booking_title" />
+          <InputField label="Page Subtitle" field="booking_subtitle" />
+        </ContentSection>
+      </div>
+    </div>
+  );
+};
+
+// =====================
+// Contact Info Management (Super Admin Only)
+// =====================
+const ContactManagement = () => {
+  const [contact, setContact] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const { token } = useAuth();
+
+  useEffect(() => {
+    fetchContact();
+  }, []);
+
+  const fetchContact = async () => {
+    try {
+      const response = await axios.get(`${API}/settings/contact`);
+      setContact(response.data);
+    } catch (error) {
+      toast.error('Failed to fetch contact info');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      await axios.put(`${API}/settings/contact`, contact, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      toast.success('Contact information saved!');
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to save contact info');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="w-8 h-8 animate-spin text-cyan-400" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">Contact Information</h1>
+          <p className="text-white/50 text-sm mt-1">Manage contact details displayed on the website</p>
+        </div>
+        <button
+          onClick={handleSave}
+          disabled={saving}
+          className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-teal-500 text-black font-semibold hover:scale-105 transition-transform disabled:opacity-50"
+        >
+          {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+          Save Changes
+        </button>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="glass rounded-xl p-6 border border-white/10">
+          <h3 className="font-bold text-lg mb-4 text-cyan-400">Primary Contact</h3>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm text-white/60 mb-2">Email Address</label>
+              <input
+                type="email"
+                value={contact?.email || ''}
+                onChange={(e) => setContact({ ...contact, email: e.target.value })}
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-cyan-500/50"
+                placeholder="studio@example.com"
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-white/60 mb-2">Primary Phone Number</label>
+              <input
+                type="tel"
+                value={contact?.phone || ''}
+                onChange={(e) => setContact({ ...contact, phone: e.target.value })}
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-cyan-500/50"
+                placeholder="+91 9876543210"
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-white/60 mb-2">Secondary Phone Number (Optional)</label>
+              <input
+                type="tel"
+                value={contact?.phone2 || ''}
+                onChange={(e) => setContact({ ...contact, phone2: e.target.value })}
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-cyan-500/50"
+                placeholder="+91 9876543210"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="glass rounded-xl p-6 border border-white/10">
+          <h3 className="font-bold text-lg mb-4 text-orange-400">Location</h3>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm text-white/60 mb-2">Address</label>
+              <textarea
+                value={contact?.address || ''}
+                onChange={(e) => setContact({ ...contact, address: e.target.value })}
+                rows={2}
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-cyan-500/50 resize-none"
+                placeholder="123 Studio Street, City, Country"
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-white/60 mb-2">Google Maps URL</label>
+              <input
+                type="url"
+                value={contact?.location_url || ''}
+                onChange={(e) => setContact({ ...contact, location_url: e.target.value })}
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-cyan-500/50"
+                placeholder="https://maps.google.com/..."
+              />
+              <p className="text-xs text-white/40 mt-1">This link will be shown as "View on Map" in the footer</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="glass rounded-xl p-6 border border-white/10 lg:col-span-2">
+          <h3 className="font-bold text-lg mb-4 text-teal-400">Social Media Links</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm text-white/60 mb-2">Instagram URL</label>
+              <input
+                type="url"
+                value={contact?.instagram_url || ''}
+                onChange={(e) => setContact({ ...contact, instagram_url: e.target.value })}
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-cyan-500/50"
+                placeholder="https://instagram.com/..."
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-white/60 mb-2">YouTube URL</label>
+              <input
+                type="url"
+                value={contact?.youtube_url || ''}
+                onChange={(e) => setContact({ ...contact, youtube_url: e.target.value })}
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-cyan-500/50"
+                placeholder="https://youtube.com/..."
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-white/60 mb-2">Twitter/X URL</label>
+              <input
+                type="url"
+                value={contact?.twitter_url || ''}
+                onChange={(e) => setContact({ ...contact, twitter_url: e.target.value })}
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-cyan-500/50"
+                placeholder="https://twitter.com/..."
+              />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
