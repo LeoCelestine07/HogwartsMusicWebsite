@@ -1663,6 +1663,137 @@ const ContentManagement = () => {
           </div>
         </div>
 
+        {/* Careers Page Section */}
+        <div className="glass rounded-xl p-6 border border-white/10 lg:col-span-2">
+          <h3 className="font-bold text-lg mb-4 text-purple-400">Careers Page</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm text-white/60 mb-2">Page Badge</label>
+              <input
+                type="text"
+                value={content.careers_badge || ''}
+                onChange={(e) => handleInputChange('careers_badge', e.target.value)}
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-cyan-500/50"
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-white/60 mb-2">Page Title</label>
+              <input
+                type="text"
+                value={content.careers_title || ''}
+                onChange={(e) => handleInputChange('careers_title', e.target.value)}
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-cyan-500/50"
+              />
+            </div>
+            <div className="md:col-span-2">
+              <label className="block text-sm text-white/60 mb-2">Page Subtitle</label>
+              <input
+                type="text"
+                value={content.careers_subtitle || ''}
+                onChange={(e) => handleInputChange('careers_subtitle', e.target.value)}
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-cyan-500/50"
+              />
+            </div>
+            <div className="md:col-span-2">
+              <label className="block text-sm text-white/60 mb-2">Page Description</label>
+              <textarea
+                value={content.careers_description || ''}
+                onChange={(e) => handleInputChange('careers_description', e.target.value)}
+                rows={3}
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-cyan-500/50 resize-none"
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-white/60 mb-2">Internship Card Title</label>
+              <input
+                type="text"
+                value={content.careers_intern_title || ''}
+                onChange={(e) => handleInputChange('careers_intern_title', e.target.value)}
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-cyan-500/50"
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-white/60 mb-2">Sound Engineer Card Title</label>
+              <input
+                type="text"
+                value={content.careers_job_title || ''}
+                onChange={(e) => handleInputChange('careers_job_title', e.target.value)}
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-cyan-500/50"
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-white/60 mb-2">Internship Description</label>
+              <textarea
+                value={content.careers_intern_desc || ''}
+                onChange={(e) => handleInputChange('careers_intern_desc', e.target.value)}
+                rows={2}
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-cyan-500/50 resize-none"
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-white/60 mb-2">Sound Engineer Description</label>
+              <textarea
+                value={content.careers_job_desc || ''}
+                onChange={(e) => handleInputChange('careers_job_desc', e.target.value)}
+                rows={2}
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-cyan-500/50 resize-none"
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-white/60 mb-2">Application Form Title</label>
+              <input
+                type="text"
+                value={content.careers_form_title || ''}
+                onChange={(e) => handleInputChange('careers_form_title', e.target.value)}
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-cyan-500/50"
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-white/60 mb-2">Application Form Subtitle</label>
+              <input
+                type="text"
+                value={content.careers_form_subtitle || ''}
+                onChange={(e) => handleInputChange('careers_form_subtitle', e.target.value)}
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-cyan-500/50"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Applications Tab Text (Admin Dashboard) */}
+        <div className="glass rounded-xl p-6 border border-white/10">
+          <h3 className="font-bold text-lg mb-4 text-amber-400">Applications Tab (Admin)</h3>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm text-white/60 mb-2">Tab Title</label>
+              <input
+                type="text"
+                value={content.applications_title || ''}
+                onChange={(e) => handleInputChange('applications_title', e.target.value)}
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-cyan-500/50"
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-white/60 mb-2">Tab Subtitle</label>
+              <input
+                type="text"
+                value={content.applications_subtitle || ''}
+                onChange={(e) => handleInputChange('applications_subtitle', e.target.value)}
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-cyan-500/50"
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-white/60 mb-2">Empty State Message</label>
+              <input
+                type="text"
+                value={content.applications_empty_text || ''}
+                onChange={(e) => handleInputChange('applications_empty_text', e.target.value)}
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-cyan-500/50"
+              />
+            </div>
+          </div>
+        </div>
+
         {/* Footer */}
         <div className="glass rounded-xl p-6 border border-white/10 lg:col-span-2">
           <h3 className="font-bold text-lg mb-4 text-purple-400">Footer</h3>
