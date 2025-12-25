@@ -10,6 +10,7 @@ import ServicesPage from "./pages/ServicesPage";
 import ProjectsPage from "./pages/ProjectsPage";
 import AboutPage from "./pages/AboutPage";
 import BookingPage from "./pages/BookingPage";
+import CareersPage from "./pages/CareersPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import AdminLoginPage from "./pages/AdminLoginPage";
@@ -30,6 +31,7 @@ function App() {
               <Route path="/services" element={<ServicesPage />} />
               <Route path="/projects" element={<ProjectsPage />} />
               <Route path="/about" element={<AboutPage />} />
+              <Route path="/careers" element={<CareersPage />} />
               <Route path="/booking" element={<BookingPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
