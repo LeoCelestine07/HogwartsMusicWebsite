@@ -88,9 +88,9 @@ class HogwartsAPITester:
             return True
         return False
 
-    def test_stats_section_cms(self):
-        """Test Stats Section CMS functionality"""
-        print("\n📊 Testing Stats Section CMS...")
+    def test_services_page_cms(self):
+        """Test Services Page CMS functionality"""
+        print("\n🛠️ Testing Services Page CMS...")
         
         # Get current content
         content = self.run_test(
@@ -101,30 +101,34 @@ class HogwartsAPITester:
         )
         
         if content:
-            # Check if stats fields exist
-            stats_fields = ['stat1_value', 'stat1_label', 'stat2_value', 'stat2_label', 'stat3_value', 'stat3_label']
+            # Check if services page fields exist
+            services_fields = [
+                'services_page_badge', 'services_page_title', 'services_page_title_gradient',
+                'services_page_subtitle', 'services_cta_title', 'services_cta_subtitle', 'services_cta_button'
+            ]
             missing_fields = []
-            for field in stats_fields:
+            for field in services_fields:
                 if field not in content:
                     missing_fields.append(field)
             
             if missing_fields:
-                self.log_result("Stats Section Fields Present", False, f"Missing fields: {missing_fields}")
+                self.log_result("Services Page Fields Present", False, f"Missing fields: {missing_fields}")
             else:
-                self.log_result("Stats Section Fields Present", True)
+                self.log_result("Services Page Fields Present", True)
                 
-                # Test updating stats
+                # Test updating services page content
                 update_data = {
-                    "stat1_value": "7+",
-                    "stat1_label": "Years Experience",
-                    "stat2_value": "60+", 
-                    "stat2_label": "Projects Delivered",
-                    "stat3_value": "100%",
-                    "stat3_label": "Client Satisfaction"
+                    "services_page_badge": "Our Services",
+                    "services_page_title": "Professional Audio",
+                    "services_page_title_gradient": "Solutions",
+                    "services_page_subtitle": "From dubbing to mastering, we offer comprehensive audio post-production services.",
+                    "services_cta_title": "Not Sure Which Service You Need?",
+                    "services_cta_subtitle": "Let's discuss your project and find the perfect solution.",
+                    "services_cta_button": "Get in Touch"
                 }
                 
                 updated = self.run_test(
-                    "Update Stats Section",
+                    "Update Services Page Content",
                     "PUT",
                     "settings/content",
                     200,
@@ -135,9 +139,76 @@ class HogwartsAPITester:
                     # Verify the update
                     for key, value in update_data.items():
                         if updated.get(key) == value:
-                            self.log_result(f"Stats Field {key} Updated", True)
+                            self.log_result(f"Services Page Field {key} Updated", True)
                         else:
-                            self.log_result(f"Stats Field {key} Updated", False, f"Expected {value}, got {updated.get(key)}")
+                            self.log_result(f"Services Page Field {key} Updated", False, f"Expected {value}, got {updated.get(key)}")
+
+    def test_about_page_cms(self):
+        """Test About Page CMS functionality"""
+        print("\n📖 Testing About Page CMS...")
+        
+        # Get current content
+        content = self.run_test(
+            "Get Site Content",
+            "GET", 
+            "settings/content",
+            200
+        )
+        
+        if content:
+            # Check if about page fields exist
+            about_fields = [
+                'about_page_badge', 'about_page_title', 'about_page_title_gradient', 'about_page_description',
+                'about_philosophy_title', 'about_philosophy_text', 'about_feature1', 'about_feature2', 'about_feature3',
+                'about_values_badge', 'about_values_title', 'about_journey_badge', 'about_journey_title',
+                'about_cta_title', 'about_cta_title_gradient', 'about_cta_subtitle', 'about_cta_button'
+            ]
+            missing_fields = []
+            for field in about_fields:
+                if field not in content:
+                    missing_fields.append(field)
+            
+            if missing_fields:
+                self.log_result("About Page Fields Present", False, f"Missing fields: {missing_fields}")
+            else:
+                self.log_result("About Page Fields Present", True)
+                
+                # Test updating about page content
+                update_data = {
+                    "about_page_badge": "About Us",
+                    "about_page_title": "Crafting Sound",
+                    "about_page_title_gradient": "Since 2018",
+                    "about_page_description": "Hogwarts Music Studio is a professional audio post-production facility.",
+                    "about_philosophy_title": "Our Philosophy",
+                    "about_philosophy_text": "We believe that great sound is invisible — it amplifies emotional impact.",
+                    "about_feature1": "Industry-standard equipment",
+                    "about_feature2": "Fast turnaround times", 
+                    "about_feature3": "Dedicated support team",
+                    "about_values_badge": "Our Values",
+                    "about_values_title": "What Drives Us",
+                    "about_journey_badge": "Our Journey",
+                    "about_journey_title": "The Story So Far",
+                    "about_cta_title": "Let's Create Something",
+                    "about_cta_title_gradient": "Extraordinary",
+                    "about_cta_subtitle": "Ready to elevate your project with professional audio?",
+                    "about_cta_button": "Start a Project"
+                }
+                
+                updated = self.run_test(
+                    "Update About Page Content",
+                    "PUT",
+                    "settings/content",
+                    200,
+                    data=update_data
+                )
+                
+                if updated:
+                    # Verify the update
+                    for key, value in update_data.items():
+                        if updated.get(key) == value:
+                            self.log_result(f"About Page Field {key} Updated", True)
+                        else:
+                            self.log_result(f"About Page Field {key} Updated", False, f"Expected {value}, got {updated.get(key)}")
 
     def test_application_form_labels_cms(self):
         """Test Application Form Labels CMS functionality"""
