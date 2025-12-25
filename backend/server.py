@@ -458,6 +458,113 @@ async def admin_login(data: AdminLogin):
     }
 
 # =========================
+# FORGOT PASSWORD & RESEND OTP
+# =========================
+
+@api_router.post("/auth/forgot-password")
+async def forgot_password(data: ForgotPasswordRequest):
+    """Request OTP for password reset - works for both admin and user"""
+    if data.user_type == "admin":
+        user = await db.admins.find_one({"email": data.email}, {"_id": 0})
+        if not user:
+            raise HTTPException(status_code=404, detail="Admin not found with this email")
+    else:
+        user = await db.users.find_one({"email": data.email}, {"_id": 0})
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found with this email")
+    
+    otp = generate_otp()
+    expires = datetime.now(timezone.utc) + timedelta(minutes=10)
+    
+    await db.otp_codes.delete_many({"email": data.email, "type": "password_reset"})
+    await db.otp_codes.insert_one({
+        "email": data.email, 
+        "otp": otp, 
+        "expires": expires.isoformat(),
+        "type": "password_reset",
+        "user_type": data.user_type
+    })
+    
+    html = f"""
+    <div style="font-family: 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #0a1a1f 0%, #0d2229 100%); color: white; border-radius: 16px; overflow: hidden;">
+        <div style="background: linear-gradient(135deg, #f97316 0%, #fbbf24 100%); padding: 30px; text-align: center;">
+            <h1 style="margin: 0; color: black; font-size: 28px;">Password Reset</h1>
+        </div>
+        <div style="padding: 30px; text-align: center;">
+            <p style="color: rgba(255,255,255,0.8); font-size: 16px;">You requested a password reset for your Hogwarts Music Studio account.</p>
+            <p style="color: rgba(255,255,255,0.6);">Your verification code is:</p>
+            <h1 style="color: #f97316; letter-spacing: 10px; font-size: 48px; margin: 20px 0;">{otp}</h1>
+            <p style="color: rgba(255,255,255,0.5); font-size: 14px;">This code expires in 10 minutes.</p>
+            <div style="margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 8px;">
+                <p style="margin: 0; color: rgba(255,255,255,0.5); font-size: 12px;">If you didn't request this, please ignore this email.</p>
+            </div>
+        </div>
+    </div>
+    """
+    await send_email(data.email, "Password Reset OTP - Hogwarts Music Studio", html)
+    logger.info(f"Password reset OTP sent to {data.email}")
+    return {"message": "OTP sent to your email", "email": data.email}
+
+@api_router.post("/auth/reset-password")
+async def reset_password(data: ResetPasswordVerify):
+    """Verify OTP and reset password"""
+    otp_doc = await db.otp_codes.find_one({
+        "email": data.email, 
+        "otp": data.otp, 
+        "type": "password_reset"
+    }, {"_id": 0})
+    
+    if not otp_doc:
+        raise HTTPException(status_code=400, detail="Invalid OTP")
+    if datetime.fromisoformat(otp_doc["expires"]) < datetime.now(timezone.utc):
+        raise HTTPException(status_code=400, detail="OTP expired")
+    
+    new_password_hash = hash_password(data.new_password)
+    
+    if data.user_type == "admin":
+        result = await db.admins.update_one(
+            {"email": data.email}, 
+            {"$set": {"password": new_password_hash}}
+        )
+    else:
+        result = await db.users.update_one(
+            {"email": data.email}, 
+            {"$set": {"password": new_password_hash}}
+        )
+    
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    await db.otp_codes.delete_many({"email": data.email, "type": "password_reset"})
+    logger.info(f"Password reset successful for {data.email}")
+    return {"message": "Password reset successful"}
+
+@api_router.post("/admin/resend-otp")
+async def resend_admin_otp(data: AdminOTPRequest):
+    """Resend OTP for admin registration"""
+    otp = generate_otp()
+    expires = datetime.now(timezone.utc) + timedelta(minutes=10)
+    
+    await db.otp_codes.delete_many({"email": data.email, "type": {"$ne": "password_reset"}})
+    await db.otp_codes.insert_one({"email": data.email, "otp": otp, "expires": expires.isoformat()})
+    
+    html = f"""
+    <div style="font-family: 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #0a1a1f 0%, #0d2229 100%); color: white; border-radius: 16px; overflow: hidden;">
+        <div style="background: linear-gradient(135deg, #00d4d4 0%, #14b8a6 100%); padding: 30px; text-align: center;">
+            <h1 style="margin: 0; color: black; font-size: 28px;">Verification Code</h1>
+        </div>
+        <div style="padding: 30px; text-align: center;">
+            <p style="color: rgba(255,255,255,0.8); font-size: 16px;">Here's your new verification code:</p>
+            <h1 style="color: #00d4d4; letter-spacing: 10px; font-size: 48px; margin: 20px 0;">{otp}</h1>
+            <p style="color: rgba(255,255,255,0.5); font-size: 14px;">This code expires in 10 minutes.</p>
+        </div>
+    </div>
+    """
+    await send_email(data.email, "New OTP - Hogwarts Music Studio", html)
+    logger.info(f"OTP resent to {data.email}")
+    return {"message": "OTP resent to email"}
+
+# =========================
 # ADMIN MANAGEMENT (Super Admin Only)
 # =========================
 
