@@ -20,6 +20,7 @@ const iconMap = {
 const HomePage = () => {
   const [services, setServices] = useState([]);
   const [projects, setProjects] = useState([]);
+  const [content, setContent] = useState(null);
 
   useEffect(() => {
     fetchData();
@@ -27,12 +28,14 @@ const HomePage = () => {
 
   const fetchData = async () => {
     try {
-      const [servicesRes, projectsRes] = await Promise.all([
+      const [servicesRes, projectsRes, contentRes] = await Promise.all([
         axios.get(`${API}/services`),
-        axios.get(`${API}/projects`)
+        axios.get(`${API}/projects`),
+        axios.get(`${API}/settings/content`)
       ]);
       setServices(servicesRes.data);
       setProjects(projectsRes.data.slice(0, 3));
+      setContent(contentRes.data);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
