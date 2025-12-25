@@ -530,9 +530,13 @@ class HogwartsAPITester:
         
         # Test new CMS features
         if self.token:
+            self.test_projects_page_cms()
+            self.test_timeline_cms()
             self.test_services_page_cms()
             self.test_about_page_cms()
             self.test_application_form_labels_cms()
+            self.test_application_status_update_email()
+            self.test_admin_applications_access()
         
         # Test job application features (public endpoints)
         self.test_job_application_with_new_fields()
