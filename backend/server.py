@@ -893,6 +893,10 @@ DEFAULT_SITE_CONTENT = {
     "careers_job_desc": "Join our team of professional sound engineers. We offer competitive salaries and the chance to work on exciting projects.",
     "careers_form_title": "Apply Now",
     "careers_form_subtitle": "Tell us about yourself and we'll get back to you",
+    # Applications Tab (Admin)
+    "applications_title": "Job Applications",
+    "applications_subtitle": "Review and manage job applications",
+    "applications_empty_text": "No applications received yet.",
     # Footer
     "footer_tagline": "Professional audio post-production studio crafting sonic excellence for films, music, and content creators.",
     "footer_quick_links_title": "Quick Links",
