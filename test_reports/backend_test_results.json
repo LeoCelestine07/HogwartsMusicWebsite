@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-12-25T15:39:35.425643",
+  "timestamp": "2025-12-25T16:04:25.487914",
   "total_tests": 33,
   "passed_tests": 33,
   "success_rate": 100.0,
@@ -157,7 +157,7 @@
     {
       "test": "Chat Response Content",
       "success": true,
-      "details": "Response length: 789"
+      "details": "Response length: 687"
     },
     {
       "test": "Get User Profile",
