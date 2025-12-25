@@ -666,7 +666,7 @@ const ServicesManagement = () => {
               <img 
                 src={resolveImageUrl(service.image_url, 'service')} 
                 alt={service.name}
-                className="w-full h-full object-cover opacity-70 group-hover:opacity-90 transition-opacity"
+                className="w-full h-full object-cover group-hover:scale-105 transition-all"
                 onError={(e) => handleImageError(e, 'service')}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#0a1a1f]/90 to-transparent" />
@@ -902,7 +902,7 @@ const ProjectsManagement = () => {
               <img 
                 src={resolveImageUrl(project.image_url, 'project')} 
                 alt={project.name}
-                className="w-full h-full object-cover opacity-70 group-hover:opacity-90 transition-opacity"
+                className="w-full h-full object-cover group-hover:scale-105 transition-all"
                 onError={(e) => handleImageError(e, 'project')}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#0a1a1f]/90 to-transparent" />
