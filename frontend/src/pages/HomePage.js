@@ -100,7 +100,7 @@ const HomePage = () => {
                 <img src={content?.logo_url || LOGO_URL} alt={content?.logo_alt || "Hogwarts Music Studio"} className="w-full h-full object-contain" />
               </div>
               <span className="inline-block px-4 py-2 rounded-full glass border border-teal-500/30 text-xs uppercase tracking-[0.2em] text-teal-400 mb-6">
-                Professional Audio Post-Production
+                {content?.hero_badge || 'Professional Audio Post-Production'}
               </span>
             </motion.div>
 
