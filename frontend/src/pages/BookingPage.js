@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Calendar, Clock, User, Mail, Phone, FileText, CheckCircle, ArrowRight, ArrowLeft, Loader2 } from 'lucide-react';
+import { Calendar, Clock, User, Mail, Phone, FileText, CheckCircle, ArrowRight, ArrowLeft, Loader2, Zap } from 'lucide-react';
 import { toast } from 'sonner';
 import axios from 'axios';
 import { Calendar as CalendarComponent } from '../components/ui/calendar';
@@ -125,9 +125,16 @@ const BookingPage = () => {
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="glass-heavy rounded-3xl p-12 md:p-16 max-w-lg text-center border border-white/20"
+          className="glass-heavy rounded-3xl p-12 md:p-16 max-w-lg text-center border border-teal-500/20 relative overflow-hidden"
         >
-          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-cyan-400 to-purple-500 flex items-center justify-center mx-auto mb-8">
+          <motion.div
+            animate={{ opacity: [0.3, 0.8, 0.3] }}
+            transition={{ duration: 2, repeat: Infinity }}
+            className="absolute top-4 right-6 text-amber-400/40"
+          >
+            <Zap className="w-6 h-6 lightning-bolt" />
+          </motion.div>
+          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-cyan-500 to-teal-500 flex items-center justify-center mx-auto mb-8">
             <CheckCircle className="w-10 h-10 text-black" />
           </div>
           <h2 className="text-3xl font-bold mb-4">Booking Confirmed!</h2>
@@ -135,7 +142,7 @@ const BookingPage = () => {
             We've sent a confirmation email to <strong className="text-white">{formData.email}</strong>. 
             Our team will contact you shortly to finalize the details.
           </p>
-          <div className="glass rounded-2xl p-6 mb-8 text-left border border-white/10">
+          <div className="glass rounded-2xl p-6 mb-8 text-left border border-cyan-500/20">
             <p className="text-sm text-white/40 mb-2">Booking Summary</p>
             <p className="font-semibold">{formData.service_name}</p>
             <p className="text-white/60 text-sm">
@@ -149,7 +156,7 @@ const BookingPage = () => {
           </div>
           <button
             onClick={() => navigate('/')}
-            className="px-8 py-4 rounded-full bg-white text-black font-bold hover:scale-105 transition-transform"
+            className="px-8 py-4 rounded-full bg-gradient-to-r from-cyan-500 to-teal-500 text-black font-bold hover:scale-105 transition-transform"
           >
             Back to Home
           </button>
@@ -161,9 +168,9 @@ const BookingPage = () => {
   return (
     <div className="relative min-h-screen" data-testid="booking-page">
       {/* Background */}
-      <div className="fixed inset-0 bg-[#030305] -z-10">
-        <div className="absolute inset-0 bg-gradient-to-br from-cyan-900/10 via-transparent to-purple-900/10" />
-        <div className="absolute top-1/3 right-1/3 w-[500px] h-[500px] bg-cyan-500/5 rounded-full blur-[150px]" />
+      <div className="fixed inset-0 bg-[#0a1a1f] -z-10">
+        <div className="absolute inset-0 bg-gradient-to-br from-cyan-900/15 via-transparent to-teal-900/10" />
+        <div className="absolute top-1/3 right-1/3 w-[500px] h-[500px] bg-cyan-500/8 rounded-full blur-[150px]" />
       </div>
 
       <div className="pt-40 pb-20 px-6 md:px-12">
@@ -174,7 +181,7 @@ const BookingPage = () => {
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-12"
           >
-            <span className="inline-block px-4 py-2 rounded-full glass border border-white/10 text-xs uppercase tracking-[0.2em] text-cyan-400 mb-6">
+            <span className="inline-block px-4 py-2 rounded-full glass border border-cyan-500/30 text-xs uppercase tracking-[0.2em] text-cyan-400 mb-6">
               Book a Session
             </span>
             <h1 className="text-4xl md:text-5xl font-bold tracking-tighter mb-4">
@@ -192,14 +199,14 @@ const BookingPage = () => {
                   <div
                     className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all ${
                       step >= s
-                        ? 'bg-gradient-to-br from-cyan-400 to-purple-500 text-black'
+                        ? 'bg-gradient-to-br from-cyan-500 to-teal-500 text-black'
                         : 'glass border border-white/10 text-white/40'
                     }`}
                   >
                     {s}
                   </div>
                   {s < 3 && (
-                    <div className={`w-16 h-0.5 mx-2 ${step > s ? 'bg-gradient-to-r from-cyan-400 to-purple-500' : 'bg-white/10'}`} />
+                    <div className={`w-16 h-0.5 mx-2 ${step > s ? 'bg-gradient-to-r from-cyan-500 to-teal-500' : 'bg-white/10'}`} />
                   )}
                 </div>
               ))}
@@ -212,7 +219,7 @@ const BookingPage = () => {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
-            className="glass-heavy rounded-3xl p-8 md:p-12 border border-white/20"
+            className="glass-heavy rounded-3xl p-8 md:p-12 border border-teal-500/20"
           >
             {/* Step 1: Personal Info */}
             {step === 1 && (
@@ -273,7 +280,7 @@ const BookingPage = () => {
             {step === 2 && (
               <div className="space-y-6">
                 <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
-                  <FileText className="w-6 h-6 text-cyan-400" />
+                  <FileText className="w-6 h-6 text-orange-400" />
                   Service Details
                 </h2>
                 
@@ -286,7 +293,7 @@ const BookingPage = () => {
                     >
                       <SelectValue placeholder="Choose a service" />
                     </SelectTrigger>
-                    <SelectContent className="bg-[#0a0a12] border border-white/10">
+                    <SelectContent className="bg-[#0d2229] border border-white/10">
                       {services.map((service) => (
                         <SelectItem 
                           key={service.id} 
@@ -324,7 +331,7 @@ const BookingPage = () => {
             {step === 3 && (
               <div className="space-y-6">
                 <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
-                  <Calendar className="w-6 h-6 text-cyan-400" />
+                  <Calendar className="w-6 h-6 text-teal-400" />
                   Select Date & Time
                 </h2>
                 
@@ -346,22 +353,25 @@ const BookingPage = () => {
                   <div>
                     <label className="block text-sm text-white/60 mb-4">Preferred Time *</label>
                     <div className="grid grid-cols-2 gap-3">
-                      {timeSlots.map((time) => (
-                        <button
-                          key={time}
-                          type="button"
-                          onClick={() => handleTimeSelect(time)}
-                          data-testid={`time-slot-${time.replace(/\s+/g, '-').toLowerCase()}`}
-                          className={`px-4 py-3 rounded-xl text-sm font-medium transition-all ${
-                            formData.preferred_time === time
-                              ? 'bg-gradient-to-r from-cyan-400 to-purple-500 text-black'
-                              : 'glass border border-white/10 text-white/60 hover:text-white hover:border-white/20'
-                          }`}
-                        >
-                          <Clock className="w-4 h-4 inline mr-2" />
-                          {time}
-                        </button>
-                      ))}
+                      {timeSlots.map((time, index) => {
+                        const isOrange = index % 3 === 1;
+                        return (
+                          <button
+                            key={time}
+                            type="button"
+                            onClick={() => handleTimeSelect(time)}
+                            data-testid={`time-slot-${time.replace(/\s+/g, '-').toLowerCase()}`}
+                            className={`px-4 py-3 rounded-xl text-sm font-medium transition-all ${
+                              formData.preferred_time === time
+                                ? 'bg-gradient-to-r from-cyan-500 to-teal-500 text-black'
+                                : 'glass border border-white/10 text-white/60 hover:text-white hover:border-white/20'
+                            }`}
+                          >
+                            <Clock className="w-4 h-4 inline mr-2" />
+                            {time}
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
                 </div>
@@ -386,7 +396,7 @@ const BookingPage = () => {
               {step < 3 ? (
                 <button
                   onClick={() => validateStep(step) ? setStep(step + 1) : toast.error('Please fill all required fields')}
-                  className="flex items-center gap-2 px-8 py-3 rounded-full bg-white text-black font-semibold hover:scale-105 transition-transform"
+                  className="flex items-center gap-2 px-8 py-3 rounded-full bg-gradient-to-r from-cyan-500 to-teal-500 text-black font-semibold hover:scale-105 transition-transform"
                   data-testid="btn-next"
                 >
                   Next
@@ -396,7 +406,7 @@ const BookingPage = () => {
                 <button
                   onClick={handleSubmit}
                   disabled={loading}
-                  className="flex items-center gap-2 px-8 py-3 rounded-full bg-gradient-to-r from-cyan-400 to-purple-500 text-black font-bold hover:scale-105 transition-transform disabled:opacity-50"
+                  className="flex items-center gap-2 px-8 py-3 rounded-full bg-gradient-to-r from-orange-500 to-amber-500 text-black font-bold hover:scale-105 transition-transform disabled:opacity-50"
                   data-testid="btn-submit"
                 >
                   {loading ? (
