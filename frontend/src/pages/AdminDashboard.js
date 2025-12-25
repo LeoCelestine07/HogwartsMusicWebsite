@@ -1860,6 +1860,210 @@ const ContactManagement = () => {
 };
 
 // =====================
+// Applications Management (Super Admin Only)
+// =====================
+const ApplicationsManagement = () => {
+  const [applications, setApplications] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState('all');
+  const { token } = useAuth();
+
+  useEffect(() => {
+    fetchApplications();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const fetchApplications = async () => {
+    try {
+      const response = await axios.get(`${API}/applications`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setApplications(response.data);
+    } catch (error) {
+      toast.error('Failed to fetch applications');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateStatus = async (appId, status) => {
+    try {
+      await axios.put(`${API}/applications/${appId}/status?status=${status}`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      toast.success(`Status updated to ${status}`);
+      fetchApplications();
+    } catch (error) {
+      toast.error('Failed to update status');
+    }
+  };
+
+  const deleteApplication = async (appId) => {
+    if (!window.confirm('Are you sure you want to delete this application?')) return;
+    try {
+      await axios.delete(`${API}/applications/${appId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      toast.success('Application deleted');
+      fetchApplications();
+    } catch (error) {
+      toast.error('Failed to delete application');
+    }
+  };
+
+  const filteredApplications = applications.filter(app => {
+    if (filter === 'all') return true;
+    if (filter === 'intern') return app.position_type === 'intern';
+    if (filter === 'engineer') return app.position_type === 'engineer';
+    return app.status === filter;
+  });
+
+  const statusColors = {
+    pending: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
+    reviewed: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
+    contacted: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30',
+    hired: 'bg-green-500/20 text-green-400 border-green-500/30',
+    rejected: 'bg-red-500/20 text-red-400 border-red-500/30'
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="w-8 h-8 animate-spin text-cyan-400" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold">Job Applications</h1>
+          <p className="text-white/50 text-sm mt-1">Manage intern and engineer applications</p>
+        </div>
+        <div className="flex items-center gap-2">
+          {['all', 'intern', 'engineer', 'pending', 'hired'].map((f) => (
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
+              className={`px-4 py-2 rounded-lg text-sm capitalize transition-all ${
+                filter === f
+                  ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30'
+                  : 'glass border border-white/10 text-white/60 hover:text-white'
+              }`}
+            >
+              {f}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {filteredApplications.length === 0 ? (
+        <div className="glass rounded-2xl p-12 text-center border border-white/10">
+          <GraduationCap className="w-12 h-12 text-white/20 mx-auto mb-4" />
+          <p className="text-white/50">No applications found</p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {filteredApplications.map((app) => (
+            <motion.div
+              key={app.id}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="glass rounded-2xl p-6 border border-white/10"
+            >
+              <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
+                      app.position_type === 'intern' 
+                        ? 'bg-purple-500/20' 
+                        : 'bg-cyan-500/20'
+                    }`}>
+                      {app.position_type === 'intern' 
+                        ? <GraduationCap className="w-6 h-6 text-purple-400" />
+                        : <Briefcase className="w-6 h-6 text-cyan-400" />
+                      }
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-lg">{app.name}</h3>
+                      <span className={`text-sm ${app.position_type === 'intern' ? 'text-purple-400' : 'text-cyan-400'}`}>
+                        {app.position_type === 'intern' ? 'Internship' : 'Sound Engineer'}
+                      </span>
+                    </div>
+                    <span className={`ml-auto px-3 py-1 rounded-full text-xs border ${statusColors[app.status]}`}>
+                      {app.status}
+                    </span>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm mb-4">
+                    <div className="flex items-center gap-2 text-white/60">
+                      <Mail className="w-4 h-4" />
+                      <a href={`mailto:${app.email}`} className="hover:text-cyan-400">{app.email}</a>
+                    </div>
+                    <div className="flex items-center gap-2 text-white/60">
+                      <Phone className="w-4 h-4" />
+                      <a href={`tel:${app.phone}`} className="hover:text-cyan-400">{app.phone}</a>
+                    </div>
+                    <div className="flex items-center gap-2 text-white/60">
+                      <MapPin className="w-4 h-4" />
+                      {app.city}
+                    </div>
+                  </div>
+
+                  <div className="glass rounded-xl p-4 border border-white/5">
+                    <p className="text-sm text-white/70">{app.note}</p>
+                  </div>
+
+                  {app.portfolio_url && (
+                    <a
+                      href={app.portfolio_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-block mt-3 text-sm text-cyan-400 hover:text-cyan-300"
+                    >
+                      View Portfolio →
+                    </a>
+                  )}
+
+                  <p className="text-xs text-white/40 mt-3">
+                    Applied: {new Date(app.created_at).toLocaleDateString()}
+                  </p>
+                </div>
+
+                <div className="flex lg:flex-col gap-2">
+                  <Select
+                    value={app.status}
+                    onValueChange={(status) => updateStatus(app.id, status)}
+                  >
+                    <SelectTrigger className="w-32 h-9 text-xs bg-white/5 border-white/10">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-[#0d2229] border-white/10">
+                      <SelectItem value="pending">Pending</SelectItem>
+                      <SelectItem value="reviewed">Reviewed</SelectItem>
+                      <SelectItem value="contacted">Contacted</SelectItem>
+                      <SelectItem value="hired">Hired</SelectItem>
+                      <SelectItem value="rejected">Rejected</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <button
+                    onClick={() => deleteApplication(app.id)}
+                    className="p-2 rounded-lg hover:bg-red-500/20 text-red-400"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// =====================
 // Main Admin Dashboard
 // =====================
 const AdminDashboard = () => {
