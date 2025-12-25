@@ -1,0 +1,33 @@
+{
+  "timestamp": "2025-12-25T14:23:00.644585",
+  "total_tests": 5,
+  "passed_tests": 3,
+  "success_rate": 60.0,
+  "results": [
+    {
+      "test": "Get Projects",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Projects Count Check",
+      "success": true,
+      "details": "Found 5 projects"
+    },
+    {
+      "test": "Admin OTP Request",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Admin Direct Login",
+      "success": false,
+      "details": "Status: 401 (Expected 200) - Invalid credentials"
+    },
+    {
+      "test": "Admin Token Generated",
+      "success": false,
+      "details": "No token in response"
+    }
+  ]
+}
